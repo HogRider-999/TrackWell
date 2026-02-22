@@ -2,10 +2,12 @@
   "name": "TrackWell Fitness & Study",
   "short_name": "TrackWell",
   "description": "一款專為學生設計，結合健身訓練、飲食管理與番茄鐘專注的個人化成長助手。",
-  "start_url": "index.html",
-  "display": "standalone",
+  "start_url": "./index.html",
+  "scope": ".",
+  "display": "fullscreen",
+  "orientation": "portrait",
   "background_color": "#050505",
-  "theme_color": "#d88210",
+  "theme_color": "#050505",
   "icons": [
     {
       "src": "icon-192.png",
