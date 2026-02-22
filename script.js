@@ -591,21 +591,19 @@ function saveBodyStats() {
 function updateBodyDisplay(data) {
     if (!data) return;
     
-    document.getElementById('display-weight').innerHTML = `${data.weight} <small>kg</small>`;
-    document.getElementById('display-fat').innerHTML = `${data.fat} <small>%</small>`;
+    if (!data) return; 
+    document.getElementById('display-weight').innerHTML = `${data.weight} <small>kg</small>`; 
+    document.getElementById('display-fat').innerHTML = `${data.fat} <small>%</small>`; 
     document.getElementById('display-muscle').innerHTML = `${data.muscle} <small>kg</small>`;
     
-    const homeWeight = document.getElementById('home-weight-display');
-    if (homeWeight) {
-        homeWeight.innerHTML = `${parseFloat(data.weight).toFixed(1)}<small>kg</small>`;
-    }
+    const homeWeight = document.getElementById('home-weight-display'); 
+    if (homeWeight) homeWeight.innerHTML = `${parseFloat(data.weight).toFixed(1)}<small>kg</small>`;
     
-    const topStats = document.getElementById('top-user-stats');
-    if (topStats) {
-        topStats.innerHTML = `160cm | ${data.weight}kg`;
-    }
+    const currentHeight = localStorage.getItem('trackwell_height') || "180";
+    const topStats = document.getElementById('top-user-stats'); 
+    if(topStats) topStats.innerHTML = `${currentHeight}cm | ${data.weight}kg`;
     
-    const wg = localStorage.getItem('trackwell_weight_goal') || 65.0;
+    const wg = localStorage.getItem('trackwell_weight_goal') || 70.0; 
     updateWeightProgressBar(data.weight, wg);
 }
 
