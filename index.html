@@ -544,32 +544,35 @@
         </div>
 
         <div id="body-input-modal" class="modal-overlay" onclick="closeModal(event, 'body-input-modal')">
-    <div class="modal-content">
-        <div class="modal-header"><h3 data-i18n="statsUpdateTitle">紀錄今日數據與目標</h3><i class="fas fa-times close-btn" onclick="closeModal(event, 'body-input-modal')"></i></div>
-        <div class="modal-body">
-            <div class="input-group"><label>身高 (cm)</label><input type="number" id="input-height" step="0.1"></div>
-            
-            <div class="input-group"><label data-i18n="statsWeight">體重 (kg)</label><input type="number" id="input-weight" step="0.1"></div>
-            <div class="input-group"><label>目標體重 (kg)</label><input type="number" id="input-weight-goal" step="0.1"></div>
-            <div class="input-group"><label data-i18n="statsFat">體脂肪 (%)</label><input type="number" id="input-fat" step="0.1"></div>
-            <div class="input-group"><label data-i18n="statsMuscle">骨骼肌重 (kg)</label><input type="number" id="input-muscle" step="0.1"></div>
-        </div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-file-medical text-primary"></i> <span data-i18n="statsUpdateTitle">紀錄今日數據與目標</span></h3>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'body-input-modal')"></i>
+                </div>
                 <div class="modal-body">
                     <div class="input-group">
-                        <label data-i18n="statsWeight">體重 (kg)</label>
-                        <input type="number" id="input-weight" step="0.1">
+                        <label><i class="fas fa-ruler-vertical"></i> 身高 (cm)</label>
+                        <input type="number" id="input-height" step="0.1" placeholder="例如: 160">
                     </div>
-                    <div class="input-group">
-                        <label>目標體重 (kg)</label>
-                        <input type="number" id="input-weight-goal" step="0.1">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label><i class="fas fa-weight"></i> <span data-i18n="statsWeight">體重</span> (kg)</label>
+                            <input type="number" id="input-weight" step="0.1" placeholder="0.0">
+                        </div>
+                        <div class="input-group">
+                            <label><i class="fas fa-bullseye"></i> 目標體重 (kg)</label>
+                            <input type="number" id="input-weight-goal" step="0.1" placeholder="0.0">
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label data-i18n="statsFat">體脂肪 (%)</label>
-                        <input type="number" id="input-fat" step="0.1">
-                    </div>
-                    <div class="input-group">
-                        <label data-i18n="statsMuscle">骨骼肌重 (kg)</label>
-                        <input type="number" id="input-muscle" step="0.1">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label><i class="fas fa-percentage"></i> <span data-i18n="statsFat">體脂肪</span> (%)</label>
+                            <input type="number" id="input-fat" step="0.1" placeholder="0.0">
+                        </div>
+                        <div class="input-group">
+                            <label><i class="fas fa-child"></i> <span data-i18n="statsMuscle">骨骼肌重</span> (kg)</label>
+                            <input type="number" id="input-muscle" step="0.1" placeholder="0.0">
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
