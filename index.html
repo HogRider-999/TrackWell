@@ -22,16 +22,35 @@
     </div>
 
     <div class="app-container" id="app">
+        <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
         <aside class="sidebar">
             <div class="logo">TrackWell</div>
             <nav class="menu">
                 <ul>
-                    <li class="nav-item active" onclick="showPage('home', this)"><i class="fas fa-home"></i> <span data-i18n="navHome">首頁</span></li>
-                    <li class="nav-item" onclick="showPage('workout', this)"><i class="fas fa-dumbbell"></i> <span data-i18n="navWorkout">訓練計畫</span></li>
-                    <li class="nav-item" onclick="showPage('diet', this)"><i class="fas fa-utensils"></i> <span data-i18n="navDiet">飲食紀錄</span></li>
-                    <li class="nav-item" onclick="showPage('pomodoro-page', this)"><i class="fas fa-clock"></i> <span data-i18n="navPomo">計時器</span></li>
-                    <li class="nav-item" onclick="showPage('stats', this)"><i class="fas fa-chart-line"></i> <span data-i18n="navStats">數據分析</span></li>
-                    <li class="nav-item" onclick="showPage('settings', this)"><i class="fas fa-cog"></i> <span data-i18n="navSettings">設定</span></li>
+                    <li class="nav-item active" onclick="showPage('home', this)">
+                        <i class="fas fa-home"></i> 
+                        <span data-i18n="navHome">首頁</span>
+                    </li>
+                    <li class="nav-item" onclick="showPage('workout', this)">
+                        <i class="fas fa-dumbbell"></i> 
+                        <span data-i18n="navWorkout">訓練計畫</span>
+                    </li>
+                    <li class="nav-item" onclick="showPage('diet', this)">
+                        <i class="fas fa-utensils"></i> 
+                        <span data-i18n="navDiet">飲食紀錄</span>
+                    </li>
+                    <li class="nav-item" onclick="showPage('pomodoro-page', this)">
+                        <i class="fas fa-clock"></i> 
+                        <span data-i18n="navPomo">計時器</span>
+                    </li>
+                    <li class="nav-item" onclick="showPage('stats', this)">
+                        <i class="fas fa-chart-line"></i> 
+                        <span data-i18n="navStats">數據分析</span>
+                    </li>
+                    <li class="nav-item" onclick="showPage('settings', this)">
+                        <i class="fas fa-cog"></i> 
+                        <span data-i18n="navSettings">設定</span>
+                    </li>
                 </ul>
             </nav>
             <div class="sidebar-exam-card" onclick="openModal('countdown-settings-modal')">
@@ -70,9 +89,9 @@
                                 <h3><span data-i18n="stepsTitle">今日步數</span></h3>
                                 <i class="fas fa-shoe-prints"></i>
                             </div>
-                            <div class="val" id="home-steps-val">8,542</div>
+                            <div class="val" id="home-steps-val">0</div>
                             <div class="bar-outer">
-                                <div id="home-steps-bar" class="bar-inner" style="width: 85%;"></div>
+                                <div id="home-steps-bar" class="bar-inner" style="width: 0%;"></div>
                             </div>
                         </div>
                         <div class="dash-card-lg card-small pointer-card" onclick="openModal('cal-goal-modal')">
@@ -99,21 +118,21 @@
                             <div class="weight-body">
                                 <div class="w-current">
                                     <span data-i18n="weightCurrent">目前</span>
-                                    <strong id="home-weight-display">62.0<small>kg</small></strong>
+                                    <strong id="home-weight-display">--<small>kg</small></strong>
                                 </div>
                                 <div class="w-divider"><i class="fas fa-angle-double-right"></i></div>
                                 <div class="w-goal">
                                     <span data-i18n="weightGoal">目標</span>
-                                    <strong id="home-goal-weight">65.0<small>kg</small></strong>
+                                    <strong id="home-goal-weight">--<small>kg</small></strong>
                                 </div>
                             </div>
                             <div class="w-progress-container">
                                 <div class="w-progress-track">
-                                    <div id="home-weight-bar" class="w-progress-fill" style="width: 70%;"></div>
+                                    <div id="home-weight-bar" class="w-progress-fill" style="width: 0%;"></div>
                                 </div>
                                 <div class="w-progress-labels">
-                                    <span data-i18n="weightStart" id="home-weight-start">起始: 55.0kg</span>
-                                    <span data-i18n="weightDist" id="home-weight-dist">距離目標: 3.0kg</span>
+                                    <span id="home-weight-start">起始: --kg</span>
+                                    <span id="home-weight-dist">距離目標: --kg</span>
                                 </div>
                             </div>
                         </div>
@@ -133,8 +152,12 @@
                                     <div class="timer-display-sm" id="main-timer">25:00</div>
                                 </div>
                                 <div class="timer-controls-sm">
-                                    <button class="ctrl-btn-sm play" id="pomo-play-btn" onclick="togglePomodoro()"><i class="fas fa-play"></i></button>
-                                    <button class="ctrl-btn-sm reset" onclick="resetPomodoro()"><i class="fas fa-undo"></i></button>
+                                    <button class="ctrl-btn-sm play" id="pomo-play-btn" onclick="togglePomodoro()">
+                                        <i class="fas fa-play" id="pomo-play-icon"></i>
+                                    </button>
+                                    <button class="ctrl-btn-sm reset" onclick="resetPomodoro()">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
                                 </div>
                                 <div class="pomo-modes-sm">
                                     <button class="sm-mode active" onclick="setTimerMode(25)">25m</button>
@@ -245,7 +268,7 @@
                                     <path id="diet-cal-circle" class="circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                 </svg>
                                 <div class="cal-center-text">
-                                    <span class="remain-val" id="cal-remaining">--</span>
+                                    <span class="remain-val" id="cal-remaining">0</span>
                                     <span class="remain-lbl"><span data-i18n="remain">剩餘 (kcal)</span></span>
                                 </div>
                             </div>
@@ -262,7 +285,7 @@
                                 <div class="cal-stat-operator">+</div>
                                 <div class="cal-stat-item">
                                     <span class="stat-lbl"><span data-i18n="burn">運動消耗</span></span>
-                                    <strong class="stat-val text-green" id="cal-burn">450</strong>
+                                    <strong class="stat-val text-green" id="cal-burn">0</strong>
                                 </div>
                             </div>
                         </div>
@@ -364,15 +387,22 @@
                             <div class="achievement-card">
                                 <i class="fas fa-fire-alt trophy-icon"></i>
                                 <h4><span data-i18n="statsStreak">連續訓練紀錄</span></h4>
-                                <div class="streak-days">12 <small><span data-i18n="statsDays">天</span></small></div>
-                                <p style="color:var(--primary); font-weight:bold;"><span data-i18n="statsStreakSub">保持這個節奏！</span></p>
+                                <div class="streak-days" id="streak-days-val">0 <small><span data-i18n="statsDays">天</span></small></div>
+                                <p style="color:var(--primary); font-weight:bold; margin-bottom: 20px;">
+                                    <span data-i18n="statsStreakSub">保持這個節奏！</span>
+                                </p>
+                                <button class="btn-create" id="btn-checkin" onclick="performCheckIn()">
+                                    <span data-i18n="btnCheckIn">今日簽到</span>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </section>
 
                 <section id="settings" class="page">
-                    <div class="section-header-lg"><h2 class="gradient-text"><span data-i18n="setMain">設定與偏好</span></h2></div>
+                    <div class="section-header-lg">
+                        <h2 class="gradient-text"><span data-i18n="setMain">設定與偏好</span></h2>
+                    </div>
                     <div class="settings-wrap">
                         <div class="settings-profile-card">
                             <div class="profile-avatar">
@@ -423,7 +453,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3>步數目標設定</h3>
-                    <i class="fas fa-times close-btn" onclick="closeModal(null, 'steps-settings-modal')"></i>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'steps-settings-modal')"></i>
                 </div>
                 <div class="modal-body">
                     <div class="input-group">
@@ -436,8 +466,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" onclick="closeModal(null, 'steps-settings-modal')"><span data-i18n="btnCancel">取消</span></button>
-                    <button class="btn-create" onclick="saveStepsSettings()"><span data-i18n="btnSave">儲存</span></button>
+                    <button class="btn-cancel" onclick="document.getElementById('steps-settings-modal').style.display='none'">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <button class="btn-create" onclick="saveStepsSettings()">
+                        <span data-i18n="btnSave">儲存</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -446,7 +480,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3>飲食與營養目標設定</h3>
-                    <i class="fas fa-times close-btn" onclick="closeModal(null, 'cal-goal-modal')"></i>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'cal-goal-modal')"></i>
                 </div>
                 <div class="modal-body">
                     <div class="input-group">
@@ -465,8 +499,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" onclick="closeModal(null, 'cal-goal-modal')"><span data-i18n="btnCancel">取消</span></button>
-                    <button class="btn-create" onclick="saveCalSettings()"><span data-i18n="btnSave">儲存</span></button>
+                    <button class="btn-cancel" onclick="document.getElementById('cal-goal-modal').style.display='none'">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <button class="btn-create" onclick="saveCalSettings()">
+                        <span data-i18n="btnSave">儲存</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -475,7 +513,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3><span data-i18n="dietActivity">新增運動消耗</span></h3>
-                    <i class="fas fa-times close-btn" onclick="closeModal(null, 'activity-input-modal')"></i>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'activity-input-modal')"></i>
                 </div>
                 <div class="modal-body">
                     <div class="input-group">
@@ -495,8 +533,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" onclick="closeModal(null, 'activity-input-modal')"><span data-i18n="btnCancel">取消</span></button>
-                    <button class="btn-create" onclick="saveActivity()"><span data-i18n="btnSave">新增消耗</span></button>
+                    <button class="btn-cancel" onclick="document.getElementById('activity-input-modal').style.display='none'">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <button class="btn-create" onclick="saveActivity()">
+                        <span data-i18n="btnSave">新增消耗</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -505,7 +547,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 data-i18n="statsUpdateTitle">紀錄今日數據與目標</h3>
-                    <i class="fas fa-times close-btn" onclick="closeModal(null, 'body-input-modal')"></i>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'body-input-modal')"></i>
                 </div>
                 <div class="modal-body">
                     <div class="input-group">
@@ -526,8 +568,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" onclick="closeModal(null, 'body-input-modal')"><span data-i18n="btnCancel">取消</span></button>
-                    <button class="btn-create" onclick="saveBodyStats()"><span data-i18n="btnSave">儲存數據</span></button>
+                    <button class="btn-cancel" onclick="document.getElementById('body-input-modal').style.display='none'">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <button class="btn-create" onclick="saveBodyStats()">
+                        <span data-i18n="btnSave">儲存數據</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -536,7 +582,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3><span data-i18n="mCountTitle">自訂倒數事件</span></h3>
-                    <i class="fas fa-times close-btn" onclick="closeModal(null, 'countdown-settings-modal')"></i>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'countdown-settings-modal')"></i>
                 </div>
                 <div class="modal-body">
                     <div class="input-group">
@@ -549,8 +595,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" onclick="closeModal(null, 'countdown-settings-modal')"><span data-i18n="btnCancel">取消</span></button>
-                    <button class="btn-create" onclick="saveCountdownSettings()"><span data-i18n="btnSave">儲存設定</span></button>
+                    <button class="btn-cancel" onclick="document.getElementById('countdown-settings-modal').style.display='none'">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <button class="btn-create" onclick="saveCountdownSettings()">
+                        <span data-i18n="btnSave">儲存設定</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -559,7 +609,7 @@
             <div class="modal-content ai-modal-content">
                 <div class="modal-header">
                     <h3><i class="fas fa-robot text-primary"></i> <span data-i18n="mAiTitle">AI 智能食物辨識</span></h3>
-                    <i class="fas fa-times close-btn" onclick="closeModal(null, 'ai-scan-modal')"></i>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'ai-scan-modal')"></i>
                 </div>
                 <div class="modal-body ai-body">
                     <div class="image-upload-area" onclick="document.getElementById('file-input').click()">
@@ -584,9 +634,15 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" onclick="closeModal(null, 'ai-scan-modal')"><span data-i18n="btnCancel">取消</span></button>
-                    <button class="btn-create ai-analyze-btn" id="ai-analyze-btn" disabled onclick="startAIScan()"><span data-i18n="mAiBtn">啟動推論模型</span></button>
-                    <button class="btn-create" id="ai-add-btn" style="display:none;" onclick="addScannedFood()"><span data-i18n="mAiAddBtn">加入飲食紀錄</span></button>
+                    <button class="btn-cancel" onclick="document.getElementById('ai-scan-modal').style.display='none'">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <button class="btn-create ai-analyze-btn" id="ai-analyze-btn" disabled onclick="startAIScan()">
+                        <span data-i18n="mAiBtn">啟動推論模型</span>
+                    </button>
+                    <button class="btn-create" id="ai-add-btn" style="display:none;" onclick="addScannedFood()">
+                        <span data-i18n="mAiAddBtn">加入飲食紀錄</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -595,7 +651,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3><i class="fas fa-pen text-primary"></i> <span data-i18n="mManTitle">手動輸入食物</span></h3>
-                    <i class="fas fa-times close-btn" onclick="closeModal(null, 'manual-food-modal')"></i>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'manual-food-modal')"></i>
                 </div>
                 <div class="modal-body">
                     <div class="input-group">
@@ -622,8 +678,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" onclick="closeModal(null, 'manual-food-modal')"><span data-i18n="btnCancel">取消</span></button>
-                    <button class="btn-create" onclick="saveManualFood()"><span data-i18n="mManAddBtn">加入紀錄</span></button>
+                    <button class="btn-cancel" onclick="document.getElementById('manual-food-modal').style.display='none'">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <button class="btn-create" onclick="saveManualFood()">
+                        <span data-i18n="mManAddBtn">加入紀錄</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -632,7 +692,7 @@
             <div class="modal-content" style="width: 500px; max-height: 90vh; overflow-y: auto;">
                 <div class="modal-header">
                     <h3><span data-i18n="mPlanTitle">建立新訓練計畫</span></h3>
-                    <i class="fas fa-times close-btn" onclick="closeModal(null, 'custom-plan-modal')"></i>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'custom-plan-modal')"></i>
                 </div>
                 <div class="modal-body">
                     <div class="input-group">
@@ -647,7 +707,9 @@
                             <img src="./Back day.png" class="preset-icon" onclick="selectPresetIcon(this, './Back day.png')" onerror="this.src='./custom.jpg'">
                             <img src="./Shoulder day.png" class="preset-icon" onclick="selectPresetIcon(this, './Shoulder day.png')" onerror="this.src='./custom.jpg'">
                             <img src="./Arm day.png" class="preset-icon" onclick="selectPresetIcon(this, './Arm day.png')" onerror="this.src='./custom.jpg'">
-                            <div class="local-icon-upload" onclick="document.getElementById('plan-icon-upload').click()"><i class="fas fa-upload"></i></div>
+                            <div class="local-icon-upload" onclick="document.getElementById('plan-icon-upload').click()">
+                                <i class="fas fa-upload"></i>
+                            </div>
                             <input type="file" id="plan-icon-upload" style="display:none;" accept="image/*" onchange="previewPlanIcon(event)">
                         </div>
                     </div>
@@ -658,13 +720,20 @@
                             <input type="text" id="ex-name" data-i18n="mPlanExName" placeholder="動作名稱 (例: 槓鈴深蹲)">
                             <input type="text" id="ex-meta" data-i18n="mPlanExMeta" placeholder="組數/重量 (例: 4組x12次 | 50kg)">
                             <input type="text" id="ex-desc" data-i18n="mPlanExDesc" placeholder="目標肌群 (例: 股四頭肌)">
-                            <button onclick="addCustomExToList()"><i class="fas fa-plus"></i> <span data-i18n="mPlanExAddBtn">新增動作</span></button>
+                            <button onclick="addCustomExToList()">
+                                <i class="fas fa-plus"></i> 
+                                <span data-i18n="mPlanExAddBtn">新增動作</span>
+                            </button>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" onclick="closeModal(null, 'custom-plan-modal')"><span data-i18n="btnCancel">取消</span></button>
-                    <button class="btn-create" onclick="saveCustomPlan()"><span data-i18n="btnCreate">建立計畫</span></button>
+                    <button class="btn-cancel" onclick="document.getElementById('custom-plan-modal').style.display='none'">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <button class="btn-create" onclick="saveCustomPlan()">
+                        <span data-i18n="btnCreate">建立計畫</span>
+                    </button>
                 </div>
             </div>
         </div>
