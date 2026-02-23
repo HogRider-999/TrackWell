@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupLongPress();
 });
 
-function initCheckInSystem() {
+window.initCheckInSystem = function() {
     let streakData = JSON.parse(localStorage.getItem('trackwell_streak')) || { days: 0, lastDate: null };
     const today = new Date().toDateString();
     const btn = document.getElementById('btn-checkin');
@@ -165,7 +165,7 @@ function initCheckInSystem() {
     document.getElementById('streak-days-val').innerHTML = `${streakData.days} <small><span data-i18n="statsDays">${dict[lang].statsDays}</span></small>`;
 }
 
-function performCheckIn() {
+window.performCheckIn = function() {
     let streakData = JSON.parse(localStorage.getItem('trackwell_streak')) || { days: 0, lastDate: null };
     const today = new Date().toDateString();
 
@@ -177,7 +177,7 @@ function performCheckIn() {
     }
 }
 
-function performLogin() {
+window.performLogin = function() {
     const name = document.getElementById('auth-username').value.trim();
     if (!name) return;
     localStorage.setItem('trackwell_username', name);
@@ -186,18 +186,18 @@ function performLogin() {
     updateDynamicGreeting(lang);
 }
 
-function performLogout() {
+window.performLogout = function() {
     localStorage.removeItem('trackwell_username');
     document.getElementById('auth-screen').style.display = 'flex';
     document.getElementById('auth-username').value = '';
 }
 
-function changeGoal(val) {
+window.changeGoal = function(val) {
     localStorage.setItem('trackwell_goal', val);
     applyGoalUI();
 }
 
-function applyGoalUI() {
+window.applyGoalUI = function() {
     const goal = localStorage.getItem('trackwell_goal') || 'bulking';
     document.getElementById('goal-select').value = goal;
     const lang = localStorage.getItem('trackwell_lang') || 'zh';
@@ -218,7 +218,7 @@ function applyGoalUI() {
     }
 }
 
-function updateDynamicGreeting(lang) {
+window.updateDynamicGreeting = function(lang) {
     const hour = new Date().getHours(); 
     const title = document.getElementById('home-title');
     const quoteEl = document.getElementById('home-quote');
@@ -250,7 +250,7 @@ function updateDynamicGreeting(lang) {
     }
 }
 
-function changeLanguage(lang) {
+window.changeLanguage = function(lang) {
     const t = dict[lang];
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
@@ -282,7 +282,7 @@ function changeLanguage(lang) {
     updateWeightProgressBar(savedBody ? savedBody.weight : 62.0, wg || 65.0);
 }
 
-function showPage(id, navItem) {
+window.showPage = function(id, navItem) {
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -300,7 +300,7 @@ function showPage(id, navItem) {
     }
 }
 
-function toggleSidebar() {
+window.toggleSidebar = function() {
     const appContainer = document.getElementById('app');
     if (window.innerWidth <= 768) {
         appContainer.classList.toggle('sidebar-active');
@@ -309,17 +309,17 @@ function toggleSidebar() {
     }
 }
 
-function openModal(id) {
+window.openModal = function(id) {
     document.getElementById(id).style.display = 'flex';
 }
 
-function closeModal(e, id) {
+window.closeModal = function(e, id) {
     if (!e || e.target === e.currentTarget || e.target.closest('.close-btn') || e.target.classList.contains('btn-cancel')) {
         document.getElementById(id).style.display = 'none';
     }
 }
 
-function saveStepsSettings() {
+window.saveStepsSettings = function() {
     const now = document.getElementById('input-steps-now').value;
     const goal = document.getElementById('input-steps-goal').value;
     
@@ -330,13 +330,13 @@ function saveStepsSettings() {
     document.getElementById('steps-settings-modal').style.display = 'none';
 }
 
-function renderStepsUI(now, goal) {
+window.renderStepsUI = function(now, goal) {
     document.getElementById('home-steps-val').innerText = parseInt(now).toLocaleString();
     const perc = Math.min((now / goal) * 100, 100);
     document.getElementById('home-steps-bar').style.width = perc + '%';
 }
 
-function saveCalSettings() {
+window.saveCalSettings = function() {
     const g = document.getElementById('input-cal-goal').value;
     const c = document.getElementById('input-carbs-goal').value;
     const p = document.getElementById('input-protein-goal').value;
@@ -351,13 +351,13 @@ function saveCalSettings() {
     document.getElementById('cal-goal-modal').style.display = 'none';
 }
 
-function updatePresetBurn(val) {
+window.updatePresetBurn = function(val) {
     if (val !== "0") {
         document.getElementById('input-burn-kcal').value = val;
     }
 }
 
-function saveActivity() {
+window.saveActivity = function() {
     const val = document.getElementById('input-burn-kcal').value;
     if (!val) return;
     
@@ -367,7 +367,7 @@ function saveActivity() {
     document.getElementById('activity-input-modal').style.display = 'none';
 }
 
-function renderWorkoutCards() {
+window.renderWorkoutCards = function() {
     const grid = document.getElementById('workout-card-grid');
     grid.innerHTML = '';
     const lang = document.getElementById('lang-select').value || 'zh';
@@ -389,7 +389,7 @@ function renderWorkoutCards() {
     grid.appendChild(addBtn);
 }
 
-function openDay(title, iconUrl) {
+window.openDay = function(title, iconUrl) {
     currentViewingPlan = title;
     document.getElementById('workout-home').style.display = 'none';
     document.getElementById('workout-detail').style.display = 'block';
@@ -404,13 +404,13 @@ function openDay(title, iconUrl) {
     renderDayExercises(title);
 }
 
-function backToWorkoutHome() {
+window.backToWorkoutHome = function() {
     currentViewingPlan = null;
     document.getElementById('workout-home').style.display = 'block';
     document.getElementById('workout-detail').style.display = 'none';
 }
 
-function renderDayExercises(title) {
+window.renderDayExercises = function(title) {
     const container = document.getElementById('exercise-list-container');
     container.innerHTML = '';
     
@@ -458,7 +458,7 @@ function renderDayExercises(title) {
     container.appendChild(addArea);
 }
 
-function toggleExComplete(el) {
+window.toggleExComplete = function(el) {
     const row = el.parentElement;
     row.classList.toggle('completed');
     const icon = row.querySelector('.check-icon');
@@ -472,14 +472,14 @@ function toggleExComplete(el) {
     }
 }
 
-function deleteExFromDay(title, index) {
+window.deleteExFromDay = function(title, index) {
     exercisesData[title].exercises.splice(index, 1);
     localStorage.setItem('trackwell_workouts', JSON.stringify(exercisesData));
     renderDayExercises(title);
     renderWorkoutCards();
 }
 
-function addExToDay(title) {
+window.addExToDay = function(title) {
     const n = document.getElementById('detail-ex-name').value;
     const m = document.getElementById('detail-ex-meta').value;
     const d = document.getElementById('detail-ex-desc').value;
@@ -492,7 +492,7 @@ function addExToDay(title) {
     renderWorkoutCards();
 }
 
-function deleteEntirePlan(title) {
+window.deleteEntirePlan = function(title) {
     const lang = document.getElementById('lang-select').value || 'zh';
     if (confirm(dict[lang].wConfirmDel)) {
         delete exercisesData[title];
@@ -502,13 +502,13 @@ function deleteEntirePlan(title) {
     }
 }
 
-function selectPresetIcon(el, url) {
+window.selectPresetIcon = function(el, url) {
     document.querySelectorAll('.preset-icon').forEach(i => i.classList.remove('active'));
     el.classList.add('active');
     selectedPlanIcon = url;
 }
 
-function previewPlanIcon(e) {
+window.previewPlanIcon = function(e) {
     const f = e.target.files[0];
     if (f) {
         const reader = new FileReader();
@@ -521,7 +521,7 @@ function previewPlanIcon(e) {
     }
 }
 
-function addCustomExToList() {
+window.addCustomExToList = function() {
     const n = document.getElementById('ex-name').value;
     const m = document.getElementById('ex-meta').value;
     const d = document.getElementById('ex-desc').value;
@@ -535,12 +535,12 @@ function addCustomExToList() {
     renderCustomExList();
 }
 
-function removeCustomEx(idx) {
+window.removeCustomEx = function(idx) {
     tempCustomExercises.splice(idx, 1);
     renderCustomExList();
 }
 
-function renderCustomExList() {
+window.renderCustomExList = function() {
     document.getElementById('custom-ex-list').innerHTML = tempCustomExercises.map((ex, i) => `
         <div class="list-row" style="padding:10px; margin-bottom:5px; background:#222;">
             <span style="color:#fff; font-weight:bold; font-size:14px;">${ex.name} <small style="color:#888;">(${ex.meta})</small></span>
@@ -549,7 +549,7 @@ function renderCustomExList() {
     `).join('');
 }
 
-function saveCustomPlan() {
+window.saveCustomPlan = function() {
     const title = document.getElementById('plan-name').value;
     if (!title) return;
     
@@ -563,7 +563,7 @@ function saveCustomPlan() {
     renderWorkoutCards();
 }
 
-function saveBodyStats() {
+window.saveBodyStats = function() {
     const h = document.getElementById('input-height').value;
     const w = document.getElementById('input-weight').value;
     const f = document.getElementById('input-fat').value;
@@ -590,7 +590,7 @@ function saveBodyStats() {
     document.getElementById('body-input-modal').style.display = 'none';
 }
 
-function updateBodyDisplay(data) {
+window.updateBodyDisplay = function(data) {
     if (!data) return;
     
     document.getElementById('display-weight').innerHTML = `${data.weight} <small>kg</small>`; 
@@ -608,7 +608,7 @@ function updateBodyDisplay(data) {
     updateWeightProgressBar(data.weight, wg);
 }
 
-function updateWeightProgressBar(currentW, goalW) {
+window.updateWeightProgressBar = function(currentW, goalW) {
     const current = parseFloat(currentW);
     const goal = parseFloat(goalW);
     const start = 55.0;
@@ -631,7 +631,7 @@ function updateWeightProgressBar(currentW, goalW) {
     document.getElementById('home-weight-bar').style.width = `${perc}%`;
 }
 
-function updateChart(range) {
+window.updateChart = function(range) {
     const container = document.getElementById('weight-chart-bars');
     const buttons = document.querySelectorAll('.filter-btn');
     
@@ -656,7 +656,7 @@ function updateChart(range) {
     });
 }
 
-function loadCountdown() {
+window.loadCountdown = function() {
     const saved = localStorage.getItem('trackwell_countdown');
     if (saved) {
         currentCountdown = JSON.parse(saved);
@@ -664,7 +664,7 @@ function loadCountdown() {
     }
 }
 
-function saveCountdownSettings() {
+window.saveCountdownSettings = function() {
     const name = document.getElementById('custom-event-name').value;
     const date = document.getElementById('custom-event-date').value;
     
@@ -677,12 +677,12 @@ function saveCountdownSettings() {
     }
 }
 
-function updateExamCountdown() {
+window.updateExamCountdown = function() {
     const diff = new Date(currentCountdown.date + 'T00:00:00') - new Date();
     document.getElementById('exam-days').innerText = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
 }
 
-function setTimerMode(minutes) {
+window.setTimerMode = function(minutes) {
     resetPomodoro();
     pomoTimeLeft = minutes * 60;
     pomoTotalTime = minutes * 60;
@@ -695,7 +695,7 @@ function setTimerMode(minutes) {
     });
 }
 
-function togglePomodoro() {
+window.togglePomodoro = function() {
     const btn = document.getElementById('pomo-play-btn');
     if (pomoIsRunning) {
         clearInterval(pomoInterval);
@@ -716,14 +716,14 @@ function togglePomodoro() {
     pomoIsRunning = !pomoIsRunning;
 }
 
-function updatePomoUI() {
+window.updatePomoUI = function() {
     const m = Math.floor(pomoTimeLeft / 60);
     const s = pomoTimeLeft % 60;
     document.getElementById('main-timer').innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
     document.getElementById('pomo-progress').style.strokeDashoffset = 283 - (pomoTimeLeft / pomoTotalTime) * 283;
 }
 
-function resetPomodoro() {
+window.resetPomodoro = function() {
     clearInterval(pomoInterval);
     pomoIsRunning = false;
     pomoTimeLeft = pomoTotalTime;
@@ -731,7 +731,7 @@ function resetPomodoro() {
     updatePomoUI();
 }
 
-function toggleCustomTimer() {
+window.toggleCustomTimer = function() {
     const btn = document.getElementById('ct-start-text');
     const lang = document.getElementById('lang-select').value || 'zh';
     
@@ -762,14 +762,14 @@ function toggleCustomTimer() {
     customIsRunning = !customIsRunning;
 }
 
-function updateCustomTimerUI() {
+window.updateCustomTimerUI = function() {
     const h = Math.floor(customTimeLeft / 3600);
     const m = Math.floor((customTimeLeft % 3600) / 60);
     const s = customTimeLeft % 60;
     document.getElementById('custom-timer-display').innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
 
-function resetCustomTimer() {
+window.resetCustomTimer = function() {
     clearInterval(customTimerInterval);
     customIsRunning = false;
     customTimeLeft = 0;
@@ -782,7 +782,7 @@ function resetCustomTimer() {
     document.getElementById('ct-inputs').style.display = 'flex';
 }
 
-function setupLongPress() {
+window.setupLongPress = function() {
     const pomoDisplay = document.getElementById('main-timer');
     const ctDisplay = document.getElementById('custom-timer-display');
     
@@ -811,7 +811,7 @@ function setupLongPress() {
     ctDisplay.addEventListener('touchend', handleCancel);
 }
 
-function addTodo() {
+window.addTodo = function() {
     const input = document.getElementById('todo-input');
     if (!input.value) return;
     todos.push({ text: input.value, done: false });
@@ -820,23 +820,23 @@ function addTodo() {
     renderTodos();
 }
 
-function toggleTodo(index) {
+window.toggleTodo = function(index) {
     todos[index].done = !todos[index].done;
     saveTodos();
     renderTodos();
 }
 
-function deleteTodo(index) {
+window.deleteTodo = function(index) {
     todos.splice(index, 1);
     saveTodos();
     renderTodos();
 }
 
-function saveTodos() {
+window.saveTodos = function() {
     localStorage.setItem('trackwell_todos', JSON.stringify(todos));
 }
 
-function renderTodos() {
+window.renderTodos = function() {
     document.getElementById('todo-list').innerHTML = todos.map((t, i) => `
         <li class="todo-item ${t.done ? 'done' : ''}">
             <i class="${t.done ? 'fas fa-check-circle' : 'far fa-circle'}" onclick="toggleTodo(${i})"></i>
@@ -846,21 +846,21 @@ function renderTodos() {
     `).join('');
 }
 
-function handleWaterClick(event, element) {
+window.handleWaterClick = function(event, element) {
     const rect = element.getBoundingClientRect();
     changeWater((event.clientX - rect.left) < rect.width / 2 ? -1 : 1);
 }
 
-function changeWater(amount) {
+window.changeWater = function(amount) {
     currentWaterCups = Math.max(0, Math.min(8, currentWaterCups + amount));
     toggleWater(currentWaterCups);
 }
 
-function initWaterCups() {
+window.initWaterCups = function() {
     document.getElementById('water-cups-container').innerHTML = Array(8).fill('<div class="cup-container"><div class="cup-water"></div></div>').join('');
 }
 
-function toggleWater(cupNumber) {
+window.toggleWater = function(cupNumber) {
     document.querySelectorAll('.cup-container').forEach((cup, idx) => {
         cup.classList.toggle('active', idx < cupNumber);
     });
@@ -868,7 +868,7 @@ function toggleWater(cupNumber) {
     document.getElementById('water-count-txt').innerText = `${Math.round(waterIntake)} / 2500 ml`;
 }
 
-function updateStats(kcal, c, p, f) {
+window.updateStats = function(kcal, c, p, f) {
     dietState.intake += kcal;
     dietState.carbs += c;
     dietState.protein += p;
@@ -894,7 +894,7 @@ function updateStats(kcal, c, p, f) {
     document.getElementById('bar-fat').style.width = `${Math.min((dietState.fat/75)*100, 100)}%`;
 }
 
-function saveManualFood() {
+window.saveManualFood = function() {
     addFoodItem(
         document.getElementById('manual-name').value || "手動紀錄",
         parseInt(document.getElementById('manual-kcal').value) || 0,
@@ -906,7 +906,7 @@ function saveManualFood() {
     document.getElementById('manual-food-modal').style.display = 'none';
 }
 
-function startAIScan() {
+window.startAIScan = function() {
     document.getElementById('scanner-laser').style.display = 'block';
     document.getElementById('ai-result-area').style.display = 'block';
     document.getElementById('ai-analyze-btn').style.display = 'none';
@@ -931,7 +931,7 @@ function startAIScan() {
     }, 1000);
 }
 
-function addScannedFood() {
+window.addScannedFood = function() {
     if (currentScannedFood) {
         addFoodItem(
             currentScannedFood.name,
@@ -945,24 +945,63 @@ function addScannedFood() {
     document.getElementById('ai-scan-modal').style.display = 'none';
 }
 
-function addFoodItem(name, kcal, c, p, f, type) {
+window.addFoodItem = function(name, kcal, c, p, f, type) {
     const item = document.createElement('div');
     item.className = 'food-item';
+    const vKcal = Number(kcal);
+    const vC = Number(c);
+    const vP = Number(p);
+    const vF = Number(f);
+
     item.innerHTML = `
         <div>
             <strong style="font-size:16px; color:#fff;">${name}</strong>
             <small style="color:var(--primary); font-weight:bold; margin-left:8px;">[${type}]</small><br>
-            <span style="font-size:12px; color:#888; font-weight:bold;">碳水 ${c}g | 蛋白 ${p}g | 脂肪 ${f}g</span>
+            <span style="font-size:12px; color:#888; font-weight:bold;">碳水 ${vC}g | 蛋白 ${vP}g | 脂肪 ${vF}g</span>
         </div>
-        <div style="font-size:20px; font-weight:900; color:#fff;">
-            ${kcal} <small style="color:#666; font-size:12px;">kcal</small>
+        <div style="display:flex; align-items:center; gap:15px;">
+            <div style="font-size:20px; font-weight:900; color:#fff;">
+                ${vKcal} <small style="color:#666; font-size:12px;">kcal</small>
+            </div>
+            <i class="fas fa-trash-alt" onclick="removeFoodItem(this, ${vKcal}, ${vC}, ${vP}, ${vF})" style="font-size:18px; color:#ff5252; cursor:pointer;"></i>
         </div>
     `;
     document.getElementById('lunch-list').appendChild(item);
-    updateStats(kcal, c, p, f);
-}
+    updateStats(vKcal, vC, vP, vF);
+};
 
-function previewImage(event) {
+window.removeFoodItem = function(btn, kcal, c, p, f) {
+    const item = btn.closest('.food-item');
+    if (item) {
+        item.remove(); 
+        updateStats(-Number(kcal), -Number(c), -Number(p), -Number(f));
+    }
+};
+
+window.resetDiet = function() {
+    if(confirm("確定要清空今日所有的飲食紀錄嗎？")) {
+        document.getElementById('lunch-list').innerHTML = '';
+        dietState.intake = 0;
+        dietState.carbs = 0;
+        dietState.protein = 0;
+        dietState.fat = 0;
+        updateStats(0, 0, 0, 0); 
+    }
+};
+
+window.refreshWorkout = function() {
+    const rows = document.querySelectorAll('#exercise-list-container .list-row');
+    rows.forEach(row => {
+        row.classList.remove('completed'); 
+        const icon = row.querySelector('.check-icon');
+        if(icon) {
+            icon.className = 'far fa-circle check-icon'; 
+            icon.style.color = '#555';
+        }
+    });
+};
+
+window.previewImage = function(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
