@@ -214,9 +214,12 @@
                         <div class="workout-grid-lg" id="workout-card-grid"></div>
                     </div>
                     <div id="workout-detail" style="display:none">
-                        <div class="detail-top-nav">
+                        <div class="detail-top-nav" style="display: flex; justify-content: space-between;">
                             <button class="back-modern-btn" onclick="backToWorkoutHome()">
                                 <i class="fas fa-arrow-left"></i> <span data-i18n="btnBack">返回選擇</span>
+                            </button>
+                            <button class="back-modern-btn" onclick="refreshWorkout()">
+                                <i class="fas fa-sync-alt"></i> <span>刷新課表</span>
                             </button>
                         </div>
                         <div class="detail-header-lg">
@@ -320,7 +323,10 @@
                                     <i class="fas fa-hamburger" style="color:var(--primary);"></i> 
                                     <h3><span data-i18n="mealTitle">餐點紀錄列表</span></h3>
                                 </div>
-                                <span class="meal-total" id="meal-total-kcal">0 kcal</span>
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <span class="meal-total" id="meal-total-kcal">0 kcal</span>
+                                    <i class="fas fa-trash-alt" style="color: #ff5252; cursor: pointer; font-size: 18px;" onclick="resetDiet()" title="清空今日飲食"></i>
+                                </div>
                             </div>
                             <div class="food-list" id="lunch-list"></div>
                         </div>
