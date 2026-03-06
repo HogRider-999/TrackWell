@@ -1117,6 +1117,9 @@ window.startAIScan = async function() {
         }
 
         document.getElementById('ai-add-btn').style.display = 'block';
+        // 顯示重新辨識按鈕
+        const resetBtn = document.getElementById('ai-reset-btn');
+        if (resetBtn) resetBtn.style.display = 'inline-flex';
 
     } catch (err) {
         console.error('[TrackWell] 推論失敗:', err);
@@ -1140,6 +1143,35 @@ window.addScannedFood = function() {
         );
     }
     document.getElementById('ai-scan-modal').style.display = 'none';
+    resetAIScanner();
+}
+
+// 重置 AI 掃描面板，讓使用者可以再次辨識
+window.resetAIScanner = function() {
+    currentScannedFood = null;
+    // 隱藏預覽圖
+    const preview = document.getElementById('food-preview');
+    if (preview) { preview.src = ''; preview.style.display = 'none'; }
+    // 顯示上傳區
+    const placeholder = document.getElementById('upload-placeholder');
+    if (placeholder) placeholder.style.display = 'flex';
+    // 重置結果區
+    const resultArea = document.getElementById('ai-result-area');
+    if (resultArea) resultArea.style.display = 'none';
+    // 重置按鈕狀態
+    const analyzeBtn = document.getElementById('ai-analyze-btn');
+    if (analyzeBtn) { analyzeBtn.style.display = 'block'; analyzeBtn.disabled = true; }
+    const addBtn = document.getElementById('ai-add-btn');
+    if (addBtn) addBtn.style.display = 'none';
+    // 重置狀態文字顏色
+    const status = document.getElementById('scan-status');
+    if (status) { status.style.color = ''; }
+    // 隱藏重新辨識按鈕
+    const resetBtn = document.getElementById('ai-reset-btn');
+    if (resetBtn) resetBtn.style.display = 'none';
+    // 重置 file input 讓同一張圖片也能再次觸發
+    const fileInput = document.getElementById('file-input');
+    if (fileInput) fileInput.value = '';
 }
 
 window.addFoodItem = function(name, kcal, c, p, f, type) {
@@ -1211,4 +1243,4 @@ window.previewImage = function(event) {
         };
         reader.readAsDataURL(file);
     }
-}
+} 
