@@ -656,6 +656,10 @@
                     <button class="btn-cancel" onclick="document.getElementById('ai-scan-modal').style.display='none'">
                         <span data-i18n="btnCancel">取消</span>
                     </button>
+                    <!-- 重新辨識：辨識完成後才出現 -->
+                    <button class="btn-cancel" id="ai-reset-btn" style="display:none; border-color:#888;" onclick="resetAIScanner()">
+                        <i class="fas fa-redo" style="margin-right:6px;"></i>重新辨識
+                    </button>
                     <button class="btn-create ai-analyze-btn" id="ai-analyze-btn" disabled onclick="startAIScan()">
                         <span data-i18n="mAiBtn">啟動推論模型</span>
                     </button>
