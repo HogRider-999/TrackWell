@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#d88210">
+
+    <!-- TensorFlow.js + TFLite 推論引擎 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite@0.0.1-alpha.10/dist/tf-tflite.min.js"></script>
 </head>
 <body>
     <div id="auth-screen" class="auth-overlay">
@@ -455,6 +459,7 @@
             </div>
         </main>
 
+        <!-- ══ MODALS ══ -->
         <div id="steps-settings-modal" class="modal-overlay" onclick="closeModal(event, 'steps-settings-modal')">
             <div class="modal-content">
                 <div class="modal-header">
@@ -630,7 +635,7 @@
                         <div class="upload-placeholder" id="upload-placeholder">
                             <i class="fas fa-cloud-upload-alt" style="font-size:30px;"></i>
                             <p><span data-i18n="mAiUpload">點擊或拖曳上傳食物照片</span></p>
-                            <span>已掛載: best.keras / labels.txt</span>
+                            <span>已掛載: model.tflite / labels.txt</span>
                         </div>
                         <img id="food-preview" class="food-preview" style="display:none;">
                         <div class="scanner-laser" id="scanner-laser" style="display:none;"></div>
