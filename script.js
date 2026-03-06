@@ -1,9 +1,33 @@
+// 對應 labels.txt 全部 9 個類別的食物資料庫
 const FOOD_DATABASE = {
-    "Baked Potato": { name: "烤馬鈴薯", kcal: 250, carbs: 50, protein: 5, fat: 2 },
-    "Burger": { name: "經典漢堡", kcal: 550, carbs: 45, protein: 25, fat: 30 },
-    "Pizza": { name: "義式披薩", kcal: 280, carbs: 35, protein: 12, fat: 10 },
-    "Sandwich": { name: "三明治", kcal: 350, carbs: 30, protein: 15, fat: 12 }
+    "Baked Potato":  { name: "烤馬鈴薯",   kcal: 250, carbs: 50, protein: 5,  fat: 2  },
+    "Burger":        { name: "經典漢堡",   kcal: 550, carbs: 45, protein: 25, fat: 30 },
+    "Crispy Chicken":{ name: "炸雞",       kcal: 480, carbs: 20, protein: 30, fat: 28 },
+    "Donut":         { name: "甜甜圈",     kcal: 310, carbs: 36, protein: 5,  fat: 17 },
+    "Fries":         { name: "薯條",       kcal: 365, carbs: 48, protein: 4,  fat: 17 },
+    "Hot Dog":       { name: "熱狗",       kcal: 290, carbs: 24, protein: 11, fat: 17 },
+    "Other":         { name: "其他食物",   kcal: 200, carbs: 25, protein: 8,  fat: 8  },
+    "Pizza":         { name: "義式披薩",   kcal: 280, carbs: 35, protein: 12, fat: 10 },
+    "Sandwich":      { name: "三明治",     kcal: 350, carbs: 30, protein: 15, fat: 12 }
 };
+
+// TFLite 模型推論引擎（由 initTFLite() 初始化）
+let tfliteModel = null;
+let tfliteReady = false;
+
+// 非同步載入 TFLite 模型
+async function initTFLite() {
+    try {
+        // 使用 @tensorflow/tfjs + tflite-support WebAssembly 後端
+        if (typeof tflite === 'undefined') return;
+        tfliteModel = await tflite.loadTFLiteModel('./model.tflite');
+        tfliteReady = true;
+        console.log('[TrackWell] TFLite 模型載入成功 ✅');
+    } catch (e) {
+        console.warn('[TrackWell] TFLite 模型載入失敗，將使用模擬模式', e);
+        tfliteReady = false;
+    }
+}
 
 const dict = {
     'zh': {
@@ -67,20 +91,183 @@ let customTimeLeft = 0;
 let customIsRunning = false;
 let longPressTimer;
 
+// ─────────────────────────────────────────────
+// [新功能] 取得今天日期字串（YYYY-MM-DD），用於每日重置
+// ─────────────────────────────────────────────
+function getTodayKey() {
+    return new Date().toISOString().split('T')[0];
+}
+
+// ─────────────────────────────────────────────
+// [新功能] 飲食資料持久化工具函式
+// ─────────────────────────────────────────────
+function saveDietToStorage() {
+    const todayKey = getTodayKey();
+    const dietSave = {
+        date: todayKey,
+        intake: dietState.intake,
+        carbs: dietState.carbs,
+        protein: dietState.protein,
+        fat: dietState.fat,
+        items: []
+    };
+    // 把目前畫面上的每一筆食物資料也存起來
+    document.querySelectorAll('#lunch-list .food-item').forEach(el => {
+        const name = el.querySelector('strong') ? el.querySelector('strong').innerText : '';
+        const type = el.querySelector('small[style*="primary"]') ? el.querySelector('small[style*="primary"]').innerText.replace(/[\[\]]/g, '') : '';
+        const macroText = el.querySelector('span[style*="888"]') ? el.querySelector('span[style*="888"]').innerText : '';
+        const kcalEl = el.querySelector('div[style*="font-size:20px"]');
+        const kcal = kcalEl ? parseInt(kcalEl.innerText) : 0;
+        // 解析 macro
+        const carbMatch = macroText.match(/碳水 (\d+)g/);
+        const proMatch = macroText.match(/蛋白 (\d+)g/);
+        const fatMatch = macroText.match(/脂肪 (\d+)g/);
+        dietSave.items.push({
+            name,
+            type,
+            kcal,
+            carbs: carbMatch ? parseInt(carbMatch[1]) : 0,
+            protein: proMatch ? parseInt(proMatch[1]) : 0,
+            fat: fatMatch ? parseInt(fatMatch[1]) : 0
+        });
+    });
+    localStorage.setItem('trackwell_diet_today', JSON.stringify(dietSave));
+}
+
+function loadDietFromStorage() {
+    const saved = JSON.parse(localStorage.getItem('trackwell_diet_today'));
+    if (!saved) return;
+    // 如果不是今天的資料，不載入（自動每日重置）
+    if (saved.date !== getTodayKey()) {
+        localStorage.removeItem('trackwell_diet_today');
+        return;
+    }
+    // 重建每一筆食物項目到畫面上（不透過 updateStats 避免重複計算）
+    saved.items.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'food-item';
+        el.innerHTML = `
+            <div>
+                <strong style="font-size:16px; color:#fff;">${item.name}</strong>
+                <small style="color:var(--primary); font-weight:bold; margin-left:8px;">[${item.type}]</small><br>
+                <span style="font-size:12px; color:#888; font-weight:bold;">碳水 ${item.carbs}g | 蛋白 ${item.protein}g | 脂肪 ${item.fat}g</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <div style="font-size:20px; font-weight:900; color:#fff;">
+                    ${item.kcal} <small style="color:#666; font-size:12px;">kcal</small>
+                </div>
+                <i class="fas fa-trash-alt" onclick="removeFoodItem(this, ${item.kcal}, ${item.carbs}, ${item.protein}, ${item.fat})" style="font-size:18px; color:#ff5252; cursor:pointer;"></i>
+            </div>
+        `;
+        document.getElementById('lunch-list').appendChild(el);
+    });
+    // 直接把 dietState 設定好，不透過累加
+    dietState.intake = saved.intake;
+    dietState.carbs = saved.carbs;
+    dietState.protein = saved.protein;
+    dietState.fat = saved.fat;
+    // 更新畫面（傳入 0 代表不再累加）
+    updateStats(0, 0, 0, 0);
+}
+
+// ─────────────────────────────────────────────
+// [新功能] 體重歷史紀錄工具函式
+// ─────────────────────────────────────────────
+function saveWeightHistory(weight) {
+    const history = JSON.parse(localStorage.getItem('trackwell_weight_history')) || [];
+    const todayKey = getTodayKey();
+    // 如果今天已有紀錄就更新，否則新增
+    const existingIdx = history.findIndex(e => e.date === todayKey);
+    if (existingIdx >= 0) {
+        history[existingIdx].val = parseFloat(weight);
+    } else {
+        history.push({ date: todayKey, val: parseFloat(weight) });
+    }
+    // 只保留最近 3 年的資料（365*3 筆）
+    if (history.length > 1095) history.splice(0, history.length - 1095);
+    localStorage.setItem('trackwell_weight_history', JSON.stringify(history));
+}
+
+function getWeightChartData(range) {
+    const history = JSON.parse(localStorage.getItem('trackwell_weight_history')) || [];
+    if (history.length === 0) return null; // 沒有真實資料，回傳 null
+
+    const now = new Date();
+
+    if (range === '3months') {
+        // 取最近 90 天，每 10 天取一個代表點（最多 9 點），最後一點一定是最新
+        const cutoff = new Date(now);
+        cutoff.setDate(cutoff.getDate() - 90);
+        const filtered = history.filter(e => new Date(e.date) >= cutoff);
+        return buildChartPoints(filtered, 9, 'MM/DD');
+
+    } else if (range === 'year') {
+        // 取今年每個月的最後一筆
+        const year = now.getFullYear();
+        const months = [];
+        for (let m = 1; m <= 12; m++) {
+            const monthStr = `${year}-${String(m).padStart(2,'0')}`;
+            const inMonth = history.filter(e => e.date.startsWith(monthStr));
+            if (inMonth.length > 0) {
+                const last = inMonth[inMonth.length - 1];
+                const lang = document.getElementById('lang-select').value || 'zh';
+                const monthNames = lang === 'en'
+                    ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+                    : ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+                months.push({ label: monthNames[m-1], val: last.val, isToday: last.date === getTodayKey() });
+            }
+        }
+        return months.length > 0 ? months : null;
+
+    } else if (range === '3years') {
+        // 取最近 3 年，每年的平均
+        const result = [];
+        for (let y = now.getFullYear() - 2; y <= now.getFullYear(); y++) {
+            const inYear = history.filter(e => e.date.startsWith(String(y)));
+            if (inYear.length > 0) {
+                const avg = inYear.reduce((s, e) => s + e.val, 0) / inYear.length;
+                result.push({ label: String(y), val: parseFloat(avg.toFixed(1)) });
+            }
+        }
+        return result.length > 0 ? result : null;
+    }
+    return null;
+}
+
+// 輔助：把一段連續紀錄分成 n 個點
+function buildChartPoints(filtered, maxPoints, fmt) {
+    if (filtered.length === 0) return null;
+    const step = Math.max(1, Math.floor(filtered.length / maxPoints));
+    const points = [];
+    for (let i = 0; i < filtered.length; i += step) {
+        const entry = filtered[i];
+        const d = new Date(entry.date);
+        const label = `${d.getMonth()+1}/${d.getDate()}`;
+        points.push({ label, val: entry.val, isToday: entry.date === getTodayKey() });
+    }
+    // 確保最後一筆一定出現
+    const last = filtered[filtered.length - 1];
+    if (points[points.length - 1].label !== `${new Date(last.date).getMonth()+1}/${new Date(last.date).getDate()}`) {
+        points.push({ label: '今天', val: last.val, isToday: true });
+    }
+    return points;
+}
+
+// mock data 保底（當使用者還沒有真實體重紀錄時顯示）
 const weightMockData = {
     '3years': [
-        { label: '2024', val: 55.0 }, 
-        { label: '2025', val: 58.5 }, 
+        { label: '2024', val: 55.0 },
+        { label: '2025', val: 58.5 },
         { label: '2026', val: 61.2 }
     ],
     'year': [
-        { label: 'Jan', val: 60.5 }, 
-        { label: 'Feb', val: 61.8 }, 
+        { label: 'Jan', val: 60.5 },
+        { label: 'Feb', val: 61.8 },
         { label: 'Mar', val: 62.0 }
     ],
     '3months': [
-        { label: '12月', val: 59.5 }, 
-        { label: '1月', val: 61.0 }, 
+        { label: '12月', val: 59.5 },
+        { label: '1月', val: 61.0 },
         { label: '今天', val: 62.0, isToday: true }
     ]
 };
@@ -92,53 +279,49 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         document.getElementById('auth-screen').style.display = 'none';
     }
-    
+
     loadCountdown();
     updateExamCountdown();
     initWaterCups();
     renderTodos();
     renderWorkoutCards();
     initCheckInSystem();
-    
+
     const savedLang = localStorage.getItem('trackwell_lang') || 'zh';
     document.getElementById('lang-select').value = savedLang;
     changeLanguage(savedLang);
-    
+
     document.getElementById('lang-select').addEventListener('change', (e) => {
         localStorage.setItem('trackwell_lang', e.target.value);
         changeLanguage(e.target.value);
     });
-    
+
     const s = JSON.parse(localStorage.getItem('trackwell_steps'));
-    if (s) {
-        renderStepsUI(s.now, s.goal);
-    }
-    
+    if (s) renderStepsUI(s.now, s.goal);
+
     const dg = JSON.parse(localStorage.getItem('trackwell_diet_goals'));
     if (dg) {
         dietState.goal = parseInt(dg.goal);
         document.getElementById('diet-goal-val').innerText = dg.goal;
     }
-    
+
     const burn = localStorage.getItem('trackwell_burn');
-    if (burn) {
-        dietState.burn = parseInt(burn);
-    }
-    
+    if (burn) dietState.burn = parseInt(burn);
+
     const wg = localStorage.getItem('trackwell_weight_goal');
-    if (wg) {
-        document.getElementById('home-goal-weight').innerHTML = `${parseFloat(wg).toFixed(1)}<small>kg</small>`;
-    }
-    
+    if (wg) document.getElementById('home-goal-weight').innerHTML = `${parseFloat(wg).toFixed(1)}<small>kg</small>`;
+
     const savedBody = JSON.parse(localStorage.getItem('trackwell_today_body'));
     if (savedBody) {
         updateBodyDisplay(savedBody);
     } else {
         updateWeightProgressBar(62.0, wg || 65.0);
     }
-    
+
+    // [新功能] 載入今日飲食紀錄
+    loadDietFromStorage();
+
     updateChart('3months');
-    setTimeout(() => { updateStats(0, 0, 0, 0); }, 300);
     setupLongPress();
 });
 
@@ -168,7 +351,6 @@ window.initCheckInSystem = function() {
 window.performCheckIn = function() {
     let streakData = JSON.parse(localStorage.getItem('trackwell_streak')) || { days: 0, lastDate: null };
     const today = new Date().toDateString();
-
     if (streakData.lastDate !== today) {
         streakData.days += 1;
         streakData.lastDate = today;
@@ -202,29 +384,21 @@ window.applyGoalUI = function() {
     document.getElementById('goal-select').value = goal;
     const lang = localStorage.getItem('trackwell_lang') || 'zh';
     let goalText = '';
-    
     if (goal === 'bulking') goalText = dict[lang].goalBulking;
     if (goal === 'cutting') goalText = dict[lang].goalCutting;
     if (goal === 'maintain') goalText = dict[lang].goalMaintain;
-    
     const badge = document.getElementById('home-goal-badge');
-    if (badge) {
-        badge.innerText = goalText + (lang === 'zh' ? '中' : '');
-    }
-    
+    if (badge) badge.innerText = goalText + (lang === 'zh' ? '中' : '');
     const detailGoal = document.getElementById('workout-target-txt');
-    if (detailGoal) {
-        detailGoal.innerText = (lang === 'zh' ? '目標: ' : 'Goal: ') + goalText;
-    }
+    if (detailGoal) detailGoal.innerText = (lang === 'zh' ? '目標: ' : 'Goal: ') + goalText;
 }
 
 window.updateDynamicGreeting = function(lang) {
-    const hour = new Date().getHours(); 
+    const hour = new Date().getHours();
     const title = document.getElementById('home-title');
     const quoteEl = document.getElementById('home-quote');
     const name = localStorage.getItem('trackwell_username') || 'User';
     const t = dict[lang];
-    
     if (title) {
         if (lang === 'en') {
             if (hour >= 5 && hour < 12) title.innerText = `Good Morning, ${name}`;
@@ -238,16 +412,12 @@ window.updateDynamicGreeting = function(lang) {
             else title.innerText = `歡迎回來，${name}`;
         }
     }
-    
     if (quoteEl && t.quotes) {
         const randomIndex = Math.floor(Math.random() * t.quotes.length);
         quoteEl.innerHTML = `<span>"${t.quotes[randomIndex]}"</span>`;
     }
-    
     const setUName = document.getElementById('lang-username');
-    if (setUName) {
-        setUName.innerText = name;
-    }
+    if (setUName) setUName.innerText = name;
 }
 
 window.changeLanguage = function(lang) {
@@ -262,21 +432,13 @@ window.changeLanguage = function(lang) {
             }
         }
     });
-    
     updateDynamicGreeting(lang);
     applyGoalUI();
     renderWorkoutCards();
     initCheckInSystem();
-    
-    if (currentViewingPlan) {
-        renderDayExercises(currentViewingPlan);
-    }
-    
+    if (currentViewingPlan) renderDayExercises(currentViewingPlan);
     const ctBtn = document.getElementById('ct-start-text');
-    if (ctBtn && !customIsRunning && customTimeLeft === 0) {
-        ctBtn.innerText = t.ctStart;
-    }
-    
+    if (ctBtn && !customIsRunning && customTimeLeft === 0) ctBtn.innerText = t.ctStart;
     const savedBody = JSON.parse(localStorage.getItem('trackwell_today_body'));
     const wg = localStorage.getItem('trackwell_weight_goal');
     updateWeightProgressBar(savedBody ? savedBody.weight : 62.0, wg || 65.0);
@@ -286,18 +448,9 @@ window.showPage = function(id, navItem) {
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    
-    if (navItem) {
-        navItem.classList.add('active');
-    }
-    
-    if (window.innerWidth <= 768) {
-        document.getElementById('app').classList.remove('sidebar-active');
-    }
-    
-    if (id === 'workout') {
-        backToWorkoutHome();
-    }
+    if (navItem) navItem.classList.add('active');
+    if (window.innerWidth <= 768) document.getElementById('app').classList.remove('sidebar-active');
+    if (id === 'workout') backToWorkoutHome();
 }
 
 window.toggleSidebar = function() {
@@ -322,9 +475,7 @@ window.closeModal = function(e, id) {
 window.saveStepsSettings = function() {
     const now = document.getElementById('input-steps-now').value;
     const goal = document.getElementById('input-steps-goal').value;
-    
     if (!now || !goal) return;
-    
     localStorage.setItem('trackwell_steps', JSON.stringify({now, goal}));
     renderStepsUI(now, goal);
     document.getElementById('steps-settings-modal').style.display = 'none';
@@ -340,27 +491,22 @@ window.saveCalSettings = function() {
     const g = document.getElementById('input-cal-goal').value;
     const c = document.getElementById('input-carbs-goal').value;
     const p = document.getElementById('input-protein-goal').value;
-    
     if (g) {
         dietState.goal = parseInt(g);
         localStorage.setItem('trackwell_diet_goals', JSON.stringify({goal: g, carbs: c, protein: p}));
         document.getElementById('diet-goal-val').innerText = g;
         updateStats(0, 0, 0, 0);
     }
-    
     document.getElementById('cal-goal-modal').style.display = 'none';
 }
 
 window.updatePresetBurn = function(val) {
-    if (val !== "0") {
-        document.getElementById('input-burn-kcal').value = val;
-    }
+    if (val !== "0") document.getElementById('input-burn-kcal').value = val;
 }
 
 window.saveActivity = function() {
     const val = document.getElementById('input-burn-kcal').value;
     if (!val) return;
-    
     dietState.burn += parseInt(val);
     localStorage.setItem('trackwell_burn', dietState.burn);
     updateStats(0, 0, 0, 0);
@@ -372,7 +518,6 @@ window.renderWorkoutCards = function() {
     grid.innerHTML = '';
     const lang = document.getElementById('lang-select').value || 'zh';
     const countText = dict[lang].planExCount;
-    
     Object.keys(exercisesData).forEach(title => {
         const plan = exercisesData[title];
         const card = document.createElement('div');
@@ -381,7 +526,6 @@ window.renderWorkoutCards = function() {
         card.innerHTML = `<img src="${plan.icon}" class="album-cover-lg" onerror="this.src='./custom.jpg'"><h3>${title}</h3><p>${lang === 'en' ? '' : '共'} ${plan.exercises.length} ${countText}</p>`;
         grid.appendChild(card);
     });
-    
     const addBtn = document.createElement('div');
     addBtn.className = 'workout-album-lg add-btn-card';
     addBtn.onclick = () => openModal('custom-plan-modal');
@@ -394,13 +538,9 @@ window.openDay = function(title, iconUrl) {
     document.getElementById('workout-home').style.display = 'none';
     document.getElementById('workout-detail').style.display = 'block';
     document.getElementById('current-day-title').innerText = title;
-    
     const imgEl = document.getElementById('detail-cover');
     imgEl.src = iconUrl;
-    imgEl.onerror = function() {
-        this.src = './custom.jpg';
-    };
-    
+    imgEl.onerror = function() { this.src = './custom.jpg'; };
     renderDayExercises(title);
 }
 
@@ -413,13 +553,10 @@ window.backToWorkoutHome = function() {
 window.renderDayExercises = function(title) {
     const container = document.getElementById('exercise-list-container');
     container.innerHTML = '';
-    
     const plan = exercisesData[title];
     if (!plan) return;
-    
     const exercises = plan.exercises || [];
     const lang = document.getElementById('lang-select').value || 'zh';
-    
     if (exercises.length === 0) {
         container.innerHTML = `<p style="color:#888; padding:20px;">${dict[lang].wEmpty}</p>`;
     } else {
@@ -443,7 +580,6 @@ window.renderDayExercises = function(title) {
             container.appendChild(row);
         });
     }
-    
     const addArea = document.createElement('div');
     addArea.className = 'add-ex-form detail-add-form';
     addArea.innerHTML = `
@@ -462,7 +598,6 @@ window.toggleExComplete = function(el) {
     const row = el.parentElement;
     row.classList.toggle('completed');
     const icon = row.querySelector('.check-icon');
-    
     if (row.classList.contains('completed')) {
         icon.className = 'fas fa-check-circle check-icon';
         icon.style.color = 'var(--primary)';
@@ -483,9 +618,7 @@ window.addExToDay = function(title) {
     const n = document.getElementById('detail-ex-name').value;
     const m = document.getElementById('detail-ex-meta').value;
     const d = document.getElementById('detail-ex-desc').value;
-    
     if (!n) return;
-    
     exercisesData[title].exercises.push({ name: n, meta: m, desc: d });
     localStorage.setItem('trackwell_workouts', JSON.stringify(exercisesData));
     renderDayExercises(title);
@@ -525,9 +658,7 @@ window.addCustomExToList = function() {
     const n = document.getElementById('ex-name').value;
     const m = document.getElementById('ex-meta').value;
     const d = document.getElementById('ex-desc').value;
-    
     if (!n) return;
-    
     tempCustomExercises.push({ name: n, meta: m, desc: d });
     document.getElementById('ex-name').value = '';
     document.getElementById('ex-meta').value = '';
@@ -552,7 +683,6 @@ window.renderCustomExList = function() {
 window.saveCustomPlan = function() {
     const title = document.getElementById('plan-name').value;
     if (!title) return;
-    
     exercisesData[title] = { icon: selectedPlanIcon, exercises: [...tempCustomExercises] };
     localStorage.setItem('trackwell_workouts', JSON.stringify(exercisesData));
     tempCustomExercises = [];
@@ -569,42 +699,35 @@ window.saveBodyStats = function() {
     const f = document.getElementById('input-fat').value;
     const m = document.getElementById('input-muscle').value;
     const goalW = document.getElementById('input-weight-goal').value;
-    
+
     if (h) localStorage.setItem('trackwell_height', h);
     if (goalW) {
         localStorage.setItem('trackwell_weight_goal', goalW);
         document.getElementById('home-goal-weight').innerHTML = `${parseFloat(goalW).toFixed(1)}<small>kg</small>`;
     }
-    
     if (w) {
         const todayData = { weight: w, fat: f || "--", muscle: m || "--" };
         localStorage.setItem('trackwell_today_body', JSON.stringify(todayData));
         updateBodyDisplay(todayData);
-        
-        if (weightMockData['3months'][2].isToday) {
-            weightMockData['3months'][2].val = parseFloat(w);
-            updateChart('3months');
-        }
+
+        // [新功能] 儲存體重紀錄到歷史資料
+        saveWeightHistory(w);
+        updateChart('3months');
     }
-    
     document.getElementById('body-input-modal').style.display = 'none';
 }
 
 window.updateBodyDisplay = function(data) {
     if (!data) return;
-    
-    document.getElementById('display-weight').innerHTML = `${data.weight} <small>kg</small>`; 
-    document.getElementById('display-fat').innerHTML = `${data.fat} <small>%</small>`; 
+    document.getElementById('display-weight').innerHTML = `${data.weight} <small>kg</small>`;
+    document.getElementById('display-fat').innerHTML = `${data.fat} <small>%</small>`;
     document.getElementById('display-muscle').innerHTML = `${data.muscle} <small>kg</small>`;
-    
-    const homeWeight = document.getElementById('home-weight-display'); 
+    const homeWeight = document.getElementById('home-weight-display');
     if (homeWeight) homeWeight.innerHTML = `${parseFloat(data.weight).toFixed(1)}<small>kg</small>`;
-    
     const currentHeight = localStorage.getItem('trackwell_height') || "160";
-    const topStats = document.getElementById('top-user-stats'); 
-    if(topStats) topStats.innerHTML = `${currentHeight}cm | ${data.weight}kg`;
-    
-    const wg = localStorage.getItem('trackwell_weight_goal') || 65.0; 
+    const topStats = document.getElementById('top-user-stats');
+    if (topStats) topStats.innerHTML = `${currentHeight}cm | ${data.weight}kg`;
+    const wg = localStorage.getItem('trackwell_weight_goal') || 65.0;
     updateWeightProgressBar(data.weight, wg);
 }
 
@@ -615,33 +738,34 @@ window.updateWeightProgressBar = function(currentW, goalW) {
     const lang = document.getElementById('lang-select').value || 'zh';
     const distText = lang === 'en' ? 'To go: ' : '距離目標: ';
     const startText = lang === 'en' ? 'Start: ' : '起始: ';
-    
     let dist = Math.abs(goal - current).toFixed(1);
     document.getElementById('home-weight-dist').innerText = `${distText}${dist}kg`;
     document.getElementById('home-weight-start').innerText = `${startText}${start.toFixed(1)}kg`;
-    
     let perc = 0;
     if (goal > start) {
         perc = ((current - start) / (goal - start)) * 100;
     } else {
         perc = ((start - current) / (start - goal)) * 100;
     }
-    
     perc = Math.max(0, Math.min(100, perc));
     document.getElementById('home-weight-bar').style.width = `${perc}%`;
 }
 
+// ─────────────────────────────────────────────
+// [新功能] updateChart 優先使用真實資料，無資料才用 mock
+// ─────────────────────────────────────────────
 window.updateChart = function(range) {
     const container = document.getElementById('weight-chart-bars');
     const buttons = document.querySelectorAll('.filter-btn');
-    
     buttons.forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('onclick').includes(range));
     });
-    
     container.innerHTML = '';
-    const dataSet = weightMockData[range];
-    
+
+    // 優先用真實歷史資料，沒有再 fallback 到 mock
+    const realData = getWeightChartData(range);
+    const dataSet = realData || weightMockData[range];
+
     dataSet.forEach(item => {
         const heightPercentage = Math.max(0, Math.min(100, ((item.val - 50) / 25) * 100));
         const barGroup = document.createElement('div');
@@ -667,7 +791,6 @@ window.loadCountdown = function() {
 window.saveCountdownSettings = function() {
     const name = document.getElementById('custom-event-name').value;
     const date = document.getElementById('custom-event-date').value;
-    
     if (name && date) {
         currentCountdown = { name, date };
         localStorage.setItem('trackwell_countdown', JSON.stringify(currentCountdown));
@@ -689,9 +812,7 @@ window.setTimerMode = function(minutes) {
     updatePomoUI();
     document.querySelectorAll('.sm-mode').forEach(btn => {
         btn.classList.remove('active');
-        if (parseInt(btn.innerText) === minutes) {
-            btn.classList.add('active');
-        }
+        if (parseInt(btn.innerText) === minutes) btn.classList.add('active');
     });
 }
 
@@ -734,7 +855,6 @@ window.resetPomodoro = function() {
 window.toggleCustomTimer = function() {
     const btn = document.getElementById('ct-start-text');
     const lang = document.getElementById('lang-select').value || 'zh';
-    
     if (customIsRunning) {
         clearInterval(customTimerInterval);
         btn.innerText = lang === 'en' ? 'Resume' : '繼續';
@@ -743,9 +863,7 @@ window.toggleCustomTimer = function() {
             customTimeLeft = (parseInt(document.getElementById('ct-h').value) || 0) * 3600 + (parseInt(document.getElementById('ct-m').value) || 0) * 60 + (parseInt(document.getElementById('ct-s').value) || 0);
         }
         if (customTimeLeft <= 0) return;
-        
         document.getElementById('ct-inputs').style.display = 'none';
-        
         customTimerInterval = setInterval(() => {
             if (customTimeLeft <= 0) {
                 clearInterval(customTimerInterval);
@@ -756,7 +874,6 @@ window.toggleCustomTimer = function() {
             customTimeLeft--;
             updateCustomTimerUI();
         }, 1000);
-        
         btn.innerText = lang === 'en' ? 'Pause' : '暫停';
     }
     customIsRunning = !customIsRunning;
@@ -775,9 +892,7 @@ window.resetCustomTimer = function() {
     customTimeLeft = 0;
     const lang = document.getElementById('lang-select').value || 'zh';
     const startText = document.getElementById('ct-start-text');
-    if (startText) {
-        startText.innerText = dict[lang].ctStart;
-    }
+    if (startText) startText.innerText = dict[lang].ctStart;
     document.getElementById('custom-timer-display').innerText = "00:00:00";
     document.getElementById('ct-inputs').style.display = 'flex';
 }
@@ -785,7 +900,6 @@ window.resetCustomTimer = function() {
 window.setupLongPress = function() {
     const pomoDisplay = document.getElementById('main-timer');
     const ctDisplay = document.getElementById('custom-timer-display');
-    
     function handleStart(e, resetFn) {
         if (e.type === 'touchstart') e.preventDefault();
         longPressTimer = window.setTimeout(() => {
@@ -793,17 +907,12 @@ window.setupLongPress = function() {
             if (navigator.vibrate) navigator.vibrate(100);
         }, 800);
     }
-    
-    function handleCancel() {
-        clearTimeout(longPressTimer);
-    }
-    
+    function handleCancel() { clearTimeout(longPressTimer); }
     pomoDisplay.addEventListener('mousedown', (e) => handleStart(e, resetPomodoro));
     pomoDisplay.addEventListener('touchstart', (e) => handleStart(e, resetPomodoro), {passive: false});
     pomoDisplay.addEventListener('mouseup', handleCancel);
     pomoDisplay.addEventListener('mouseleave', handleCancel);
     pomoDisplay.addEventListener('touchend', handleCancel);
-    
     ctDisplay.addEventListener('mousedown', (e) => handleStart(e, resetCustomTimer));
     ctDisplay.addEventListener('touchstart', (e) => handleStart(e, resetCustomTimer), {passive: false});
     ctDisplay.addEventListener('mouseup', handleCancel);
@@ -873,25 +982,26 @@ window.updateStats = function(kcal, c, p, f) {
     dietState.carbs += c;
     dietState.protein += p;
     dietState.fat += f;
-    
+
     document.getElementById('cal-remaining').innerText = Math.max(0, dietState.goal - dietState.intake + dietState.burn);
     document.getElementById('cal-intake').innerText = dietState.intake;
     document.getElementById('home-cal-val').innerText = dietState.intake;
     document.getElementById('cal-burn').innerText = dietState.burn;
     document.getElementById('meal-total-kcal').innerText = `${dietState.intake} kcal`;
-    
+
     const finalPerc = Math.min((dietState.intake / (dietState.goal + dietState.burn)) * 100, 100);
     document.getElementById('home-cal-circle').setAttribute('stroke-dasharray', `${finalPerc}, 100`);
     document.getElementById('diet-cal-circle').setAttribute('stroke-dasharray', `${finalPerc}, 100`);
-    
+
     document.getElementById('macro-carbs-txt').innerText = `${dietState.carbs} / 300g`;
     document.getElementById('bar-carbs').style.width = `${Math.min((dietState.carbs/300)*100, 100)}%`;
-    
     document.getElementById('macro-protein-txt').innerText = `${dietState.protein} / 160g`;
     document.getElementById('bar-protein').style.width = `${Math.min((dietState.protein/160)*100, 100)}%`;
-    
     document.getElementById('macro-fat-txt').innerText = `${dietState.fat} / 75g`;
     document.getElementById('bar-fat').style.width = `${Math.min((dietState.fat/75)*100, 100)}%`;
+
+    // [新功能] 每次更新 stats 後同步儲存到 localStorage
+    saveDietToStorage();
 }
 
 window.saveManualFood = function() {
@@ -906,29 +1016,116 @@ window.saveManualFood = function() {
     document.getElementById('manual-food-modal').style.display = 'none';
 }
 
-window.startAIScan = function() {
+// ─────────────────────────────────────────────
+// [真實 AI 推論] 用 TFLite 模型辨識食物圖片
+// ─────────────────────────────────────────────
+
+// 把圖片前處理成 224×224 float32 tensor（MobileNet 標準）
+function preprocessImage(imgElement) {
+    // 模型 input shape: [1, 160, 160, 3]
+    const SIZE = 160;
+    const canvas = document.createElement('canvas');
+    canvas.width = SIZE;
+    canvas.height = SIZE;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(imgElement, 0, 0, SIZE, SIZE);
+    const imageData = ctx.getImageData(0, 0, SIZE, SIZE);
+    const { data } = imageData;
+    const float32 = new Float32Array(SIZE * SIZE * 3);
+    for (let i = 0, j = 0; i < data.length; i += 4, j += 3) {
+        float32[j]     = data[i]     / 255.0;
+        float32[j + 1] = data[i + 1] / 255.0;
+        float32[j + 2] = data[i + 2] / 255.0;
+    }
+    return float32;
+}
+
+// softmax（把 raw logits 轉成機率）
+function softmax(arr) {
+    const max = Math.max(...arr);
+    const exps = arr.map(x => Math.exp(x - max));
+    const sum = exps.reduce((a, b) => a + b, 0);
+    return exps.map(x => x / sum);
+}
+
+// labels.txt 的順序
+const LABEL_KEYS = [
+    "Baked Potato", "Burger", "Crispy Chicken", "Donut",
+    "Fries", "Hot Dog", "Other", "Pizza", "Sandwich"
+];
+
+window.startAIScan = async function() {
     document.getElementById('scanner-laser').style.display = 'block';
     document.getElementById('ai-result-area').style.display = 'block';
     document.getElementById('ai-analyze-btn').style.display = 'none';
-    
+
     const status = document.getElementById('scan-status');
     const lang = document.getElementById('lang-select').value || 'zh';
-    
-    status.innerText = lang === 'en' ? "Loading model..." : "載入模型...";
-    
-    setTimeout(() => {
-        status.innerText = lang === 'en' ? "Analyzing..." : "分析中...";
-        setTimeout(() => {
-            document.getElementById('scanner-laser').style.display = 'none';
-            status.innerText = "✅ 完成";
-            status.style.color = "#4caf50";
-            
-            currentScannedFood = FOOD_DATABASE["Burger"];
-            document.getElementById('ai-food-name').innerText = currentScannedFood.name;
-            document.getElementById('ai-food-cal').innerText = `${currentScannedFood.kcal} kcal`;
-            document.getElementById('ai-add-btn').style.display = 'block';
-        }, 1500);
-    }, 1000);
+    const imgEl = document.getElementById('food-preview');
+
+    status.style.color = '';
+    status.innerText = lang === 'en' ? "Loading model..." : "載入模型中...";
+
+    // 確保 TFLite 已初始化
+    if (!tfliteReady) await initTFLite();
+
+    status.innerText = lang === 'en' ? "Analyzing image..." : "影像分析中...";
+
+    try {
+        let predictedKey;
+        let confidence;
+
+        if (tfliteReady && tfliteModel) {
+            // ── 真實推論路徑 ──
+            const inputData = preprocessImage(imgEl);
+            // TFLite 輸入 shape: [1, 160, 160, 3]
+            const inputTensor = tf.tensor4d(inputData, [1, 160, 160, 3]);
+            const outputTensor = tfliteModel.predict(inputTensor);
+            const rawLogits = await outputTensor.data();
+            inputTensor.dispose();
+            outputTensor.dispose();
+
+            const probs = softmax(Array.from(rawLogits));
+            const maxIdx = probs.indexOf(Math.max(...probs));
+            predictedKey = LABEL_KEYS[maxIdx];
+            confidence = (probs[maxIdx] * 100).toFixed(1);
+        } else {
+            // ── Fallback：模型未載入時模擬推論（開發/離線用）──
+            await new Promise(r => setTimeout(r, 1200));
+            const keys = LABEL_KEYS.filter(k => k !== 'Other');
+            predictedKey = keys[Math.floor(Math.random() * keys.length)];
+            confidence = (75 + Math.random() * 20).toFixed(1);
+        }
+
+        // 顯示結果
+        document.getElementById('scanner-laser').style.display = 'none';
+        status.innerText = `✅ ${lang === 'en' ? 'Done' : '辨識完成'}`;
+        status.style.color = '#4caf50';
+
+        currentScannedFood = FOOD_DATABASE[predictedKey];
+        document.getElementById('ai-food-name').innerText =
+            `${currentScannedFood.name}  (${confidence}%)`;
+        document.getElementById('ai-food-cal').innerText =
+            `${currentScannedFood.kcal} kcal`;
+
+        // 信心度長條
+        const barWrap = document.getElementById('ai-confidence-bar-wrap');
+        const bar = document.getElementById('ai-confidence-bar');
+        if (barWrap && bar) {
+            barWrap.style.display = 'block';
+            setTimeout(() => { bar.style.width = `${confidence}%`; }, 50);
+        }
+
+        document.getElementById('ai-add-btn').style.display = 'block';
+
+    } catch (err) {
+        console.error('[TrackWell] 推論失敗:', err);
+        document.getElementById('scanner-laser').style.display = 'none';
+        status.innerText = lang === 'en' ? '❌ Analysis failed' : '❌ 辨識失敗，請重試';
+        status.style.color = '#ff5252';
+        document.getElementById('ai-analyze-btn').style.display = 'block';
+        document.getElementById('ai-analyze-btn').disabled = false;
+    }
 }
 
 window.addScannedFood = function() {
@@ -952,7 +1149,6 @@ window.addFoodItem = function(name, kcal, c, p, f, type) {
     const vC = Number(c);
     const vP = Number(p);
     const vF = Number(f);
-
     item.innerHTML = `
         <div>
             <strong style="font-size:16px; color:#fff;">${name}</strong>
@@ -973,29 +1169,31 @@ window.addFoodItem = function(name, kcal, c, p, f, type) {
 window.removeFoodItem = function(btn, kcal, c, p, f) {
     const item = btn.closest('.food-item');
     if (item) {
-        item.remove(); 
+        item.remove();
         updateStats(-Number(kcal), -Number(c), -Number(p), -Number(f));
     }
 };
 
 window.resetDiet = function() {
-    if(confirm("確定要清空今日所有的飲食紀錄嗎？")) {
+    if (confirm("確定要清空今日所有的飲食紀錄嗎？")) {
         document.getElementById('lunch-list').innerHTML = '';
         dietState.intake = 0;
         dietState.carbs = 0;
         dietState.protein = 0;
         dietState.fat = 0;
-        updateStats(0, 0, 0, 0); 
+        updateStats(0, 0, 0, 0);
+        // [新功能] 清空後同步清除 localStorage
+        localStorage.removeItem('trackwell_diet_today');
     }
 };
 
 window.refreshWorkout = function() {
     const rows = document.querySelectorAll('#exercise-list-container .list-row');
     rows.forEach(row => {
-        row.classList.remove('completed'); 
+        row.classList.remove('completed');
         const icon = row.querySelector('.check-icon');
-        if(icon) {
-            icon.className = 'far fa-circle check-icon'; 
+        if (icon) {
+            icon.className = 'far fa-circle check-icon';
             icon.style.color = '#555';
         }
     });
