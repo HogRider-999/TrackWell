@@ -48,7 +48,14 @@ const dict = {
         pomoTitle: '番茄鐘專注', pomoTaskTitle: '今日任務', pomoInput: '新增待辦事項...', customTimerTitle: '自訂計時器', timeH: '時', timeM: '分', timeS: '秒', ctStart: '開始', ctReset: '重置',
         dietTitle: '飲食紀錄', dietSub: '精準掌握熱量與三大營養素', dietManual: '手動輸入', dietAI: 'AI 辨識', dietActivity: '新增活動', remain: '剩餘 (kcal)', goal: '目標', intake: '已攝取', burn: '運動消耗', carbs: '碳水化合物', protein: '蛋白質', fat: '脂肪', mealTitle: '餐點紀錄列表', waterTitle: '水分攝取', mAiTitle: 'AI 智能食物辨識', mAiUpload: '點擊或拖曳上傳食物照片', mAiStatus: '分析中...', mAiResult: '辨識結果:', mAiBtn: '啟動推論模型', mAiAddBtn: '加入飲食紀錄', mManTitle: '手動輸入食物', mManName: '食物名稱', mManNameP: '例如: 雞胸肉沙拉', mManKcal: '熱量 (kcal)', mManCarbs: '碳水 (g)', mManPro: '蛋白質 (g)', mManFat: '脂肪 (g)', mManAddBtn: '加入紀錄', planExCount: '個動作', wAddEx: '加入動作', wEmpty: '此計畫尚未新增任何動作。',
         loginSub: '請輸入您的名字以進入系統', loginInput: '您的名字...', btnLogin: '進入系統', setGoal: '健身目標', setGoalSub: '設定您的主要訓練目標', goalBulking: '增肌', goalCutting: '減脂', goalMaintain: '維持',
-        btnCheckIn: '今日簽到', btnCheckedIn: '已簽到'
+        btnCheckIn: '今日簽到', btnCheckedIn: '已簽到',
+        mealBreakfast: '早餐', mealLunch: '午餐', mealDinner: '晚餐', mealSnack: '點心',
+        summaryTitle: '今日摘要', summarySteps: '步數', summaryCal: '熱量', summaryWater: '水分', summaryWorkout: '訓練',
+        calCalcTitle: '每日熱量計算機', calCalcAge: '年齡', calCalcHeight: '身高 (cm)', calCalcWeight: '體重 (kg)',
+        calCalcGender: '性別', calCalcMale: '男', calCalcFemale: '女',
+        calCalcActivity: '活動量', calCalcSedentary: '久坐（幾乎不動）', calCalcLight: '輕度（每週1-3次）',
+        calCalcModerate: '中度（每週3-5次）', calCalcActive: '高度（每週6-7次）', calCalcVeryActive: '非常活躍',
+        calCalcResult: '建議熱量', calCalcBtn: '計算'
     },
     'en': {
         navHome: 'Home', navWorkout: 'Workouts', navDiet: 'Diet', navPomo: 'Timer', navStats: 'Analytics', navSettings: 'Settings',
@@ -68,11 +75,21 @@ const dict = {
         pomoTitle: 'Pomodoro', pomoTaskTitle: 'Daily Tasks', pomoInput: 'Add a task...', customTimerTitle: 'Custom Timer', timeH: 'H', timeM: 'M', timeS: 'S', ctStart: 'Start', ctReset: 'Reset',
         dietTitle: 'Diet Log', dietSub: 'Track Calories & Macros', dietManual: 'Manual Entry', dietAI: 'AI Scan', dietActivity: 'Add Activity', remain: 'Remaining (kcal)', goal: 'Goal', intake: 'Intake', burn: 'Burned', carbs: 'Carbs', protein: 'Protein', fat: 'Fat', mealTitle: 'Meal History', waterTitle: 'Water Intake', mAiTitle: 'AI Food Scanner', mAiUpload: 'Click or drop food image', mAiStatus: 'Analyzing...', mAiResult: 'Result:', mAiBtn: 'Start AI Model', mAiAddBtn: 'Add to Diet', mManTitle: 'Manual Entry', mManName: 'Food Name', mManNameP: 'e.g., Chicken Salad', mManKcal: 'Calories (kcal)', mManCarbs: 'Carbs (g)', mManPro: 'Protein (g)', mManFat: 'Fat (g)', mManAddBtn: 'Add Log', planExCount: 'exercises', wAddEx: 'Add Exercise', wEmpty: 'No exercises added yet.',
         loginSub: 'Enter your name to access the system', loginInput: 'Your name...', btnLogin: 'Enter System', setGoal: 'Fitness Goal', setGoalSub: 'Set your primary training goal', goalBulking: 'Bulking', goalCutting: 'Cutting', goalMaintain: 'Maintenance',
-        btnCheckIn: 'Check In Today', btnCheckedIn: 'Checked In'
+        btnCheckIn: 'Check In Today', btnCheckedIn: 'Checked In',
+        mealBreakfast: 'Breakfast', mealLunch: 'Lunch', mealDinner: 'Dinner', mealSnack: 'Snack',
+        summaryTitle: 'Today Summary', summarySteps: 'Steps', summaryCal: 'Calories', summaryWater: 'Water', summaryWorkout: 'Workout',
+        calCalcTitle: 'Daily Calorie Calculator', calCalcAge: 'Age', calCalcHeight: 'Height (cm)', calCalcWeight: 'Weight (kg)',
+        calCalcGender: 'Gender', calCalcMale: 'Male', calCalcFemale: 'Female',
+        calCalcActivity: 'Activity Level', calCalcSedentary: 'Sedentary', calCalcLight: 'Light (1-3x/week)',
+        calCalcModerate: 'Moderate (3-5x/week)', calCalcActive: 'Active (6-7x/week)', calCalcVeryActive: 'Very Active',
+        calCalcResult: 'Recommended Calories', calCalcBtn: 'Calculate'
     }
 };
 
 let dietState = { goal: 2600, intake: 0, burn: 450, carbs: 0, protein: 0, fat: 0 };
+let currentMealType = 'breakfast'; // 當前選中餐型：breakfast/lunch/dinner/snack
+// 各餐kcal統計（用於今日摘要）
+let mealTotals = { breakfast: 0, lunch: 0, dinner: 0, snack: 0 };
 let currentScannedFood = null;
 let waterIntake = 0;
 let currentWaterCups = 0;
@@ -103,71 +120,53 @@ function getTodayKey() {
 // ─────────────────────────────────────────────
 function saveDietToStorage() {
     const todayKey = getTodayKey();
-    const dietSave = {
-        date: todayKey,
-        intake: dietState.intake,
-        carbs: dietState.carbs,
-        protein: dietState.protein,
-        fat: dietState.fat,
-        items: []
-    };
-    // 把目前畫面上的每一筆食物資料也存起來
-    document.querySelectorAll('#lunch-list .food-item').forEach(el => {
+    const items = [];
+    document.querySelectorAll('.meal-section-list .food-item').forEach(el => {
         const name = el.querySelector('strong') ? el.querySelector('strong').innerText : '';
-        const type = el.querySelector('small[style*="primary"]') ? el.querySelector('small[style*="primary"]').innerText.replace(/[\[\]]/g, '') : '';
-        const macroText = el.querySelector('span[style*="888"]') ? el.querySelector('span[style*="888"]').innerText : '';
-        const kcalEl = el.querySelector('div[style*="font-size:20px"]');
-        const kcal = kcalEl ? parseInt(kcalEl.innerText) : 0;
-        // 解析 macro
+        const sourceType = el.querySelector('.food-source-tag') ? el.querySelector('.food-source-tag').innerText.replace(/[\[\]]/g,'') : '';
+        const mealType = el.dataset.mealType || 'breakfast';
+        const macroText = el.querySelector('.macro-txt') ? el.querySelector('.macro-txt').innerText : '';
+        const kcal = el.dataset.kcal ? parseInt(el.dataset.kcal) : 0;
         const carbMatch = macroText.match(/碳水 (\d+)g/);
         const proMatch = macroText.match(/蛋白 (\d+)g/);
         const fatMatch = macroText.match(/脂肪 (\d+)g/);
-        dietSave.items.push({
-            name,
-            type,
-            kcal,
+        items.push({
+            name, sourceType, mealType, kcal,
             carbs: carbMatch ? parseInt(carbMatch[1]) : 0,
             protein: proMatch ? parseInt(proMatch[1]) : 0,
             fat: fatMatch ? parseInt(fatMatch[1]) : 0
         });
     });
+    const dietSave = {
+        date: todayKey,
+        intake: dietState.intake, carbs: dietState.carbs,
+        protein: dietState.protein, fat: dietState.fat,
+        mealTotals, items
+    };
     localStorage.setItem('trackwell_diet_today', JSON.stringify(dietSave));
 }
 
 function loadDietFromStorage() {
     const saved = JSON.parse(localStorage.getItem('trackwell_diet_today'));
     if (!saved) return;
-    // 如果不是今天的資料，不載入（自動每日重置）
     if (saved.date !== getTodayKey()) {
         localStorage.removeItem('trackwell_diet_today');
         return;
     }
-    // 重建每一筆食物項目到畫面上（不透過 updateStats 避免重複計算）
+    if (saved.mealTotals) mealTotals = saved.mealTotals;
     saved.items.forEach(item => {
-        const el = document.createElement('div');
-        el.className = 'food-item';
-        el.innerHTML = `
-            <div>
-                <strong style="font-size:16px; color:#fff;">${item.name}</strong>
-                <small style="color:var(--primary); font-weight:bold; margin-left:8px;">[${item.type}]</small><br>
-                <span style="font-size:12px; color:#888; font-weight:bold;">碳水 ${item.carbs}g | 蛋白 ${item.protein}g | 脂肪 ${item.fat}g</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:15px;">
-                <div style="font-size:20px; font-weight:900; color:#fff;">
-                    ${item.kcal} <small style="color:#666; font-size:12px;">kcal</small>
-                </div>
-                <i class="fas fa-trash-alt" onclick="removeFoodItem(this, ${item.kcal}, ${item.carbs}, ${item.protein}, ${item.fat})" style="font-size:18px; color:#ff5252; cursor:pointer;"></i>
-            </div>
-        `;
-        document.getElementById('lunch-list').appendChild(el);
+        const mealType = item.mealType || 'breakfast';
+        _appendFoodItemToDOM(
+            item.name, item.kcal, item.carbs, item.protein, item.fat,
+            item.sourceType || '手動', mealType, false
+        );
     });
-    // 直接把 dietState 設定好，不透過累加
     dietState.intake = saved.intake;
     dietState.carbs = saved.carbs;
     dietState.protein = saved.protein;
     dietState.fat = saved.fat;
-    // 更新畫面（傳入 0 代表不再累加）
     updateStats(0, 0, 0, 0);
+    renderMealSummaryBadges();
 }
 
 // ─────────────────────────────────────────────
@@ -318,11 +317,17 @@ document.addEventListener('DOMContentLoaded', () => {
         updateWeightProgressBar(62.0, wg || 65.0);
     }
 
-    // [新功能] 載入今日飲食紀錄
+    // 載入今日飲食紀錄
     loadDietFromStorage();
+    renderMealSummaryBadges();
 
     updateChart('3months');
+    renderBodyCompChart();
+    updateHomeSummary();
     setupLongPress();
+
+    // 預設顯示早餐列表
+    setMealType('breakfast', document.querySelector('.meal-tab-btn'));
 });
 
 window.initCheckInSystem = function() {
@@ -595,7 +600,7 @@ window.renderDayExercises = function(title) {
 }
 
 window.toggleExComplete = function(el) {
-    const row = el.parentElement;
+    const row = el.closest('.list-row') || el.parentElement;
     row.classList.toggle('completed');
     const icon = row.querySelector('.check-icon');
     if (row.classList.contains('completed')) {
@@ -605,6 +610,7 @@ window.toggleExComplete = function(el) {
         icon.className = 'far fa-circle check-icon';
         icon.style.color = '#555';
     }
+    updateWorkoutProgress();
 }
 
 window.deleteExFromDay = function(title, index) {
@@ -709,10 +715,19 @@ window.saveBodyStats = function() {
         const todayData = { weight: w, fat: f || "--", muscle: m || "--" };
         localStorage.setItem('trackwell_today_body', JSON.stringify(todayData));
         updateBodyDisplay(todayData);
-
-        // [新功能] 儲存體重紀錄到歷史資料
         saveWeightHistory(w);
+        // 儲存體脂/肌肉歷史
+        if (f || m) {
+            const bodyHist = JSON.parse(localStorage.getItem('trackwell_body_history')) || [];
+            const todayKey = getTodayKey();
+            const idx = bodyHist.findIndex(e => e.date === todayKey);
+            const entry = { date: todayKey, fat: f || 0, muscle: m || 0 };
+            if (idx >= 0) bodyHist[idx] = entry; else bodyHist.push(entry);
+            if (bodyHist.length > 365) bodyHist.splice(0, bodyHist.length - 365);
+            localStorage.setItem('trackwell_body_history', JSON.stringify(bodyHist));
+        }
         updateChart('3months');
+        renderBodyCompChart();
     }
     document.getElementById('body-input-modal').style.display = 'none';
 }
@@ -1000,7 +1015,8 @@ window.updateStats = function(kcal, c, p, f) {
     document.getElementById('macro-fat-txt').innerText = `${dietState.fat} / 75g`;
     document.getElementById('bar-fat').style.width = `${Math.min((dietState.fat/75)*100, 100)}%`;
 
-    // [新功能] 每次更新 stats 後同步儲存到 localStorage
+    // 更新今日摘要卡
+    updateHomeSummary();
     saveDietToStorage();
 }
 
@@ -1023,6 +1039,7 @@ window.saveManualFood = function() {
 // 把圖片前處理成 224×224 float32 tensor（MobileNet 標準）
 function preprocessImage(imgElement) {
     // 模型 input shape: [1, 160, 160, 3]
+    // ★ MobileNetV2 前處理：像素值正規化到 [-1, 1]（(pixel/127.5) - 1）
     const SIZE = 160;
     const canvas = document.createElement('canvas');
     canvas.width = SIZE;
@@ -1033,9 +1050,9 @@ function preprocessImage(imgElement) {
     const { data } = imageData;
     const float32 = new Float32Array(SIZE * SIZE * 3);
     for (let i = 0, j = 0; i < data.length; i += 4, j += 3) {
-        float32[j]     = data[i]     / 255.0;
-        float32[j + 1] = data[i + 1] / 255.0;
-        float32[j + 2] = data[i + 2] / 255.0;
+        float32[j]     = (data[i]     / 127.5) - 1.0;
+        float32[j + 1] = (data[i + 1] / 127.5) - 1.0;
+        float32[j + 2] = (data[i + 2] / 127.5) - 1.0;
     }
     return float32;
 }
@@ -1174,50 +1191,222 @@ window.resetAIScanner = function() {
     if (fileInput) fileInput.value = '';
 }
 
-window.addFoodItem = function(name, kcal, c, p, f, type) {
+// 內部 DOM 建立函式（可直接呼叫，不累加 stats）
+function _appendFoodItemToDOM(name, kcal, c, p, f, type, mealType, doUpdateStats) {
+    const vKcal = Number(kcal), vC = Number(c), vP = Number(p), vF = Number(f);
     const item = document.createElement('div');
     item.className = 'food-item';
-    const vKcal = Number(kcal);
-    const vC = Number(c);
-    const vP = Number(p);
-    const vF = Number(f);
+    item.dataset.mealType = mealType;
+    item.dataset.kcal = vKcal;
+
+    const mealColors = { breakfast:'#ff9800', lunch:'#4caf50', dinner:'#2196f3', snack:'#e91e63' };
+    const borderColor = mealColors[mealType] || 'var(--primary)';
+
+    item.style.borderLeftColor = borderColor;
     item.innerHTML = `
-        <div>
-            <strong style="font-size:16px; color:#fff;">${name}</strong>
-            <small style="color:var(--primary); font-weight:bold; margin-left:8px;">[${type}]</small><br>
-            <span style="font-size:12px; color:#888; font-weight:bold;">碳水 ${vC}g | 蛋白 ${vP}g | 脂肪 ${vF}g</span>
-        </div>
-        <div style="display:flex; align-items:center; gap:15px;">
-            <div style="font-size:20px; font-weight:900; color:#fff;">
-                ${vKcal} <small style="color:#666; font-size:12px;">kcal</small>
+        <div style="flex:1; min-width:0;">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <strong style="font-size:15px; color:#fff;">${name}</strong>
+                <span class="food-source-tag" style="color:${borderColor}; font-size:11px; font-weight:800; background:${borderColor}22; padding:2px 8px; border-radius:10px;">${type}</span>
             </div>
-            <i class="fas fa-trash-alt" onclick="removeFoodItem(this, ${vKcal}, ${vC}, ${vP}, ${vF})" style="font-size:18px; color:#ff5252; cursor:pointer;"></i>
+            <span class="macro-txt" style="font-size:12px; color:#888; font-weight:bold;">碳水 ${vC}g | 蛋白 ${vP}g | 脂肪 ${vF}g</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
+            <div style="font-size:18px; font-weight:900; color:#fff; text-align:right;">
+                ${vKcal}<small style="color:#666; font-size:11px; margin-left:2px;">kcal</small>
+            </div>
+            <i class="fas fa-trash-alt" onclick="removeFoodItem(this,'${mealType}',${vKcal},${vC},${vP},${vF})" style="font-size:16px; color:#ff5252; cursor:pointer; opacity:0.7; transition:0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7"></i>
         </div>
     `;
-    document.getElementById('lunch-list').appendChild(item);
-    updateStats(vKcal, vC, vP, vF);
+
+    const listId = `meal-list-${mealType}`;
+    const listEl = document.getElementById(listId);
+    if (listEl) listEl.appendChild(item);
+
+    if (doUpdateStats !== false) {
+        mealTotals[mealType] = (mealTotals[mealType] || 0) + vKcal;
+        updateStats(vKcal, vC, vP, vF);
+        renderMealSummaryBadges();
+    }
+}
+
+window.addFoodItem = function(name, kcal, c, p, f, type) {
+    _appendFoodItemToDOM(name, kcal, c, p, f, type, currentMealType, true);
 };
 
-window.removeFoodItem = function(btn, kcal, c, p, f) {
+window.removeFoodItem = function(btn, mealType, kcal, c, p, f) {
     const item = btn.closest('.food-item');
     if (item) {
         item.remove();
+        mealTotals[mealType] = Math.max(0, (mealTotals[mealType] || 0) - Number(kcal));
         updateStats(-Number(kcal), -Number(c), -Number(p), -Number(f));
+        renderMealSummaryBadges();
     }
 };
 
 window.resetDiet = function() {
     if (confirm("確定要清空今日所有的飲食紀錄嗎？")) {
-        document.getElementById('lunch-list').innerHTML = '';
-        dietState.intake = 0;
-        dietState.carbs = 0;
-        dietState.protein = 0;
-        dietState.fat = 0;
+        ['breakfast','lunch','dinner','snack'].forEach(mt => {
+            const el = document.getElementById('meal-list-' + mt);
+            if (el) el.innerHTML = '';
+        });
+        mealTotals = { breakfast: 0, lunch: 0, dinner: 0, snack: 0 };
+        dietState.intake = 0; dietState.carbs = 0;
+        dietState.protein = 0; dietState.fat = 0;
         updateStats(0, 0, 0, 0);
-        // [新功能] 清空後同步清除 localStorage
+        renderMealSummaryBadges();
         localStorage.removeItem('trackwell_diet_today');
     }
 };
+
+// ─────────────────────────────────────────────
+// 餐別徽章更新
+// ─────────────────────────────────────────────
+window.setMealType = function(type, btn) {
+    currentMealType = type;
+    document.querySelectorAll('.meal-tab-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    // 顯示對應餐別的列表
+    document.querySelectorAll('.meal-section-list').forEach(el => {
+        el.style.display = el.id === 'meal-list-' + type ? 'block' : 'none';
+    });
+};
+
+window.renderMealSummaryBadges = function() {
+    const lang = localStorage.getItem('trackwell_lang') || 'zh';
+    const t = dict[lang];
+    const mealInfo = [
+        { key: 'breakfast', label: t.mealBreakfast, icon: 'fa-sun',       color: '#ff9800' },
+        { key: 'lunch',     label: t.mealLunch,     icon: 'fa-cloud-sun', color: '#4caf50' },
+        { key: 'dinner',    label: t.mealDinner,    icon: 'fa-moon',      color: '#2196f3' },
+        { key: 'snack',     label: t.mealSnack,     icon: 'fa-cookie',    color: '#e91e63' },
+    ];
+    mealInfo.forEach(m => {
+        const badge = document.getElementById('badge-kcal-' + m.key);
+        if (badge) badge.innerText = (mealTotals[m.key] || 0) + ' kcal';
+    });
+};
+
+// ─────────────────────────────────────────────
+// 首頁今日摘要
+// ─────────────────────────────────────────────
+window.updateHomeSummary = function() {
+    const steps = JSON.parse(localStorage.getItem('trackwell_steps'));
+    const stepsVal = steps ? parseInt(steps.now) : 0;
+    const el = {
+        steps: document.getElementById('summary-steps'),
+        cal:   document.getElementById('summary-cal'),
+        water: document.getElementById('summary-water'),
+        workout: document.getElementById('summary-workout'),
+    };
+    if (el.steps)   el.steps.innerText   = stepsVal.toLocaleString();
+    if (el.cal)     el.cal.innerText     = dietState.intake;
+    if (el.water)   el.water.innerText   = Math.round(currentWaterCups * 312.5) + ' ml';
+    if (el.workout) {
+        const done = document.querySelectorAll('#exercise-list-container .list-row.completed').length;
+        const total = document.querySelectorAll('#exercise-list-container .list-row').length;
+        el.workout.innerText = total > 0 ? `${done}/${total}` : '--';
+    }
+};
+
+// ─────────────────────────────────────────────
+// 訓練計畫：今日完成度進度條
+// ─────────────────────────────────────────────
+window.updateWorkoutProgress = function() {
+    const rows  = document.querySelectorAll('#exercise-list-container .list-row');
+    const done  = document.querySelectorAll('#exercise-list-container .list-row.completed').length;
+    const total = rows.length;
+    const perc  = total > 0 ? Math.round((done / total) * 100) : 0;
+
+    const bar   = document.getElementById('workout-progress-bar');
+    const label = document.getElementById('workout-progress-label');
+    if (bar)   bar.style.width = perc + '%';
+    if (label) label.innerText = total > 0 ? `${done} / ${total} 已完成 (${perc}%)` : '';
+    updateHomeSummary();
+};
+
+// ─────────────────────────────────────────────
+// 設定頁：卡路里計算機（Mifflin-St Jeor）
+// ─────────────────────────────────────────────
+window.calcCalories = function() {
+    const age    = parseFloat(document.getElementById('calc-age').value);
+    const height = parseFloat(document.getElementById('calc-height').value);
+    const weight = parseFloat(document.getElementById('calc-weight').value);
+    const gender = document.getElementById('calc-gender').value;
+    const activ  = parseFloat(document.getElementById('calc-activity').value);
+
+    if (!age || !height || !weight) return;
+
+    // BMR (Mifflin-St Jeor)
+    let bmr;
+    if (gender === 'male') {
+        bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+    } else {
+        bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+    }
+    const tdee = Math.round(bmr * activ);
+
+    const resultEl = document.getElementById('calc-result');
+    const resultVal = document.getElementById('calc-result-val');
+    if (resultEl) resultEl.style.display = 'block';
+    if (resultVal) resultVal.innerText = tdee;
+
+    // 提示：可以直接套用到熱量目標
+    const applyBtn = document.getElementById('calc-apply-btn');
+    if (applyBtn) applyBtn.onclick = () => {
+        dietState.goal = tdee;
+        localStorage.setItem('trackwell_diet_goals', JSON.stringify({ goal: tdee, carbs: '', protein: '' }));
+        document.getElementById('diet-goal-val').innerText = tdee;
+        updateStats(0, 0, 0, 0);
+        const lang = localStorage.getItem('trackwell_lang') || 'zh';
+        alert(lang === 'en' ? `Calorie goal set to ${tdee} kcal!` : `每日熱量目標已設定為 ${tdee} kcal！`);
+    };
+};
+
+// ─────────────────────────────────────────────
+// 數據頁：體脂 & 肌肉量圖表
+// ─────────────────────────────────────────────
+window.renderBodyCompChart = function() {
+    const history = JSON.parse(localStorage.getItem('trackwell_body_history')) || [];
+    const container = document.getElementById('body-comp-chart');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (history.length < 2) {
+        container.innerHTML = '<p style="color:#666; text-align:center; padding:30px; font-size:13px;">紀錄至少兩筆數據後，圖表將自動顯示</p>';
+        return;
+    }
+
+    const recent = history.slice(-8);
+    const maxFat = Math.max(...recent.map(d => parseFloat(d.fat) || 0), 30);
+    const maxMuscle = Math.max(...recent.map(d => parseFloat(d.muscle) || 0), 40);
+
+    recent.forEach(entry => {
+        const fat    = parseFloat(entry.fat)    || 0;
+        const muscle = parseFloat(entry.muscle) || 0;
+        const d = new Date(entry.date);
+        const label = `${d.getMonth()+1}/${d.getDate()}`;
+        const fatH    = Math.max(5, (fat    / maxFat)    * 100);
+        const muscleH = Math.max(5, (muscle / maxMuscle) * 100);
+
+        const grp = document.createElement('div');
+        grp.className = 'body-bar-group';
+        grp.innerHTML = `
+            <div class="body-bars">
+                <div class="body-bar-wrap" title="體脂 ${fat}%">
+                    <div class="body-bar fat-bar" style="height:${fatH}%"></div>
+                </div>
+                <div class="body-bar-wrap" title="肌肉 ${muscle}kg">
+                    <div class="body-bar muscle-bar" style="height:${muscleH}%"></div>
+                </div>
+            </div>
+            <div class="bar-label">${label}</div>
+        `;
+        container.appendChild(grp);
+    });
+};
+
+
 
 window.refreshWorkout = function() {
     const rows = document.querySelectorAll('#exercise-list-container .list-row');
@@ -1243,4 +1432,4 @@ window.previewImage = function(event) {
         };
         reader.readAsDataURL(file);
     }
-} 
+}
