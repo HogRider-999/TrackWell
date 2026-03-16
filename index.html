@@ -87,6 +87,25 @@
                             <p id="home-quote"><span></span></p>
                         </div>
                     </div>
+                    <!-- 今日摘要快速總覽 -->
+                    <div class="summary-strip">
+                        <div class="summary-item">
+                            <i class="fas fa-shoe-prints" style="color:#ffb347;"></i>
+                            <div><span class="summary-val" id="summary-steps">0</span><span class="summary-lbl" data-i18n="summarySteps">步數</span></div>
+                        </div>
+                        <div class="summary-item">
+                            <i class="fas fa-fire" style="color:#ff7043;"></i>
+                            <div><span class="summary-val" id="summary-cal">0</span><span class="summary-lbl" data-i18n="summaryCal">熱量</span></div>
+                        </div>
+                        <div class="summary-item">
+                            <i class="fas fa-tint" style="color:#00bcd4;"></i>
+                            <div><span class="summary-val" id="summary-water">0 ml</span><span class="summary-lbl" data-i18n="summaryWater">水分</span></div>
+                        </div>
+                        <div class="summary-item">
+                            <i class="fas fa-dumbbell" style="color:#9c27b0;"></i>
+                            <div><span class="summary-val" id="summary-workout">--</span><span class="summary-lbl" data-i18n="summaryWorkout">訓練</span></div>
+                        </div>
+                    </div>
                     <div class="dashboard-grid-lg">
                         <div class="dash-card-lg card-small pointer-card" onclick="openModal('steps-settings-modal')">
                             <div class="card-icon-header">
@@ -237,6 +256,16 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- 今日完成度進度條 -->
+                        <div class="workout-progress-card">
+                            <div class="wp-header">
+                                <span><i class="fas fa-tasks"></i> 今日完成度</span>
+                                <span id="workout-progress-label" style="color:var(--primary); font-weight:800;">0 / 0 已完成 (0%)</span>
+                            </div>
+                            <div class="wp-track">
+                                <div id="workout-progress-bar" class="wp-fill" style="width:0%"></div>
+                            </div>
+                        </div>
                         <div class="tracklist-container">
                             <div class="tracklist-header-lg">
                                 <span>#</span>
@@ -324,15 +353,38 @@
                         <div class="meal-card">
                             <div class="meal-header">
                                 <div class="meal-title">
-                                    <i class="fas fa-hamburger" style="color:var(--primary);"></i> 
-                                    <h3><span data-i18n="mealTitle">餐點紀錄列表</span></h3>
+                                    <i class="fas fa-utensils" style="color:var(--primary);"></i>
+                                    <h3><span data-i18n="mealTitle">餐點紀錄</span></h3>
                                 </div>
-                                <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="display:flex; align-items:center; gap:12px;">
                                     <span class="meal-total" id="meal-total-kcal">0 kcal</span>
-                                    <i class="fas fa-trash-alt" style="color: #ff5252; cursor: pointer; font-size: 18px;" onclick="resetDiet()" title="清空今日飲食"></i>
+                                    <i class="fas fa-trash-alt" style="color:#ff5252;cursor:pointer;font-size:16px;opacity:0.7;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" onclick="resetDiet()"></i>
                                 </div>
                             </div>
-                            <div class="food-list" id="lunch-list"></div>
+                            <!-- 餐別 Tabs -->
+                            <div class="meal-tabs">
+                                <button class="meal-tab-btn active" onclick="setMealType('breakfast',this)">
+                                    <i class="fas fa-sun"></i> <span data-i18n="mealBreakfast">早餐</span>
+                                    <span class="meal-tab-kcal" id="badge-kcal-breakfast">0 kcal</span>
+                                </button>
+                                <button class="meal-tab-btn" onclick="setMealType('lunch',this)">
+                                    <i class="fas fa-cloud-sun"></i> <span data-i18n="mealLunch">午餐</span>
+                                    <span class="meal-tab-kcal" id="badge-kcal-lunch">0 kcal</span>
+                                </button>
+                                <button class="meal-tab-btn" onclick="setMealType('dinner',this)">
+                                    <i class="fas fa-moon"></i> <span data-i18n="mealDinner">晚餐</span>
+                                    <span class="meal-tab-kcal" id="badge-kcal-dinner">0 kcal</span>
+                                </button>
+                                <button class="meal-tab-btn" onclick="setMealType('snack',this)">
+                                    <i class="fas fa-cookie"></i> <span data-i18n="mealSnack">點心</span>
+                                    <span class="meal-tab-kcal" id="badge-kcal-snack">0 kcal</span>
+                                </button>
+                            </div>
+                            <!-- 各餐列表（切換顯示） -->
+                            <div class="food-list meal-section-list" id="meal-list-breakfast"></div>
+                            <div class="food-list meal-section-list" id="meal-list-lunch" style="display:none;"></div>
+                            <div class="food-list meal-section-list" id="meal-list-dinner" style="display:none;"></div>
+                            <div class="food-list meal-section-list" id="meal-list-snack" style="display:none;"></div>
                         </div>
                         <div class="water-card" onclick="handleWaterClick(event, this)">
                             <div class="water-header">
@@ -407,6 +459,20 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- 體脂 & 肌肉量圖表 -->
+                    <div class="stats-main-panel" style="margin-top:24px;">
+                        <div class="panel-head">
+                            <h3><i class="fas fa-percentage" style="color:#e91e63;"></i> 體脂 & 肌肉量趨勢</h3>
+                            <div style="display:flex; gap:16px; align-items:center; font-size:12px; font-weight:bold;">
+                                <span><span style="display:inline-block;width:12px;height:12px;background:#e91e63;border-radius:3px;margin-right:5px;"></span>體脂 %</span>
+                                <span><span style="display:inline-block;width:12px;height:12px;background:#9c27b0;border-radius:3px;margin-right:5px;"></span>肌肉 kg</span>
+                            </div>
+                        </div>
+                        <div class="chart-container-lg" style="padding-top:20px;">
+                            <div class="chart-main-bars" id="body-comp-chart" style="align-items:flex-end; gap:6px;"></div>
+                        </div>
+                    </div>
                 </section>
 
                 <section id="settings" class="page">
@@ -426,6 +492,52 @@
                             </div>
                         </div>
                         <div class="settings-grid">
+                            <!-- 卡路里計算機 -->
+                            <div class="settings-group custom-group">
+                                <h3><i class="fas fa-calculator" style="color:#ff9800;"></i> <span data-i18n="calCalcTitle">每日熱量計算機</span></h3>
+                                <div class="input-grid" style="margin-bottom:16px;">
+                                    <div class="input-group" style="margin-bottom:0;">
+                                        <label data-i18n="calCalcAge">年齡</label>
+                                        <input type="number" id="calc-age" placeholder="25" min="10" max="100">
+                                    </div>
+                                    <div class="input-group" style="margin-bottom:0;">
+                                        <label data-i18n="calCalcHeight">身高 (cm)</label>
+                                        <input type="number" id="calc-height" placeholder="170" min="100" max="250">
+                                    </div>
+                                    <div class="input-group" style="margin-bottom:0;">
+                                        <label data-i18n="calCalcWeight">體重 (kg)</label>
+                                        <input type="number" id="calc-weight" placeholder="65" min="20" max="300">
+                                    </div>
+                                    <div class="input-group" style="margin-bottom:0;">
+                                        <label data-i18n="calCalcGender">性別</label>
+                                        <select id="calc-gender" class="modern-select" style="width:100%;">
+                                            <option value="male" data-i18n="calCalcMale">男</option>
+                                            <option value="female" data-i18n="calCalcFemale">女</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label data-i18n="calCalcActivity">活動量</label>
+                                    <select id="calc-activity" class="modern-select" style="width:100%;">
+                                        <option value="1.2" data-i18n="calCalcSedentary">久坐（幾乎不動）</option>
+                                        <option value="1.375" data-i18n="calCalcLight">輕度（每週1-3次）</option>
+                                        <option value="1.55" selected data-i18n="calCalcModerate">中度（每週3-5次）</option>
+                                        <option value="1.725" data-i18n="calCalcActive">高度（每週6-7次）</option>
+                                        <option value="1.9" data-i18n="calCalcVeryActive">非常活躍</option>
+                                    </select>
+                                </div>
+                                <button class="btn-create" style="width:100%; margin-bottom:16px;" onclick="calcCalories()">
+                                    <i class="fas fa-calculator"></i> <span data-i18n="calCalcBtn">計算</span>
+                                </button>
+                                <div id="calc-result" style="display:none; background:rgba(216,130,16,0.1); border:1px solid rgba(216,130,16,0.3); border-radius:16px; padding:20px; text-align:center;">
+                                    <div style="font-size:13px; color:#888; margin-bottom:8px;" data-i18n="calCalcResult">建議每日熱量</div>
+                                    <div style="font-size:42px; font-weight:900; color:var(--primary);" id="calc-result-val">--</div>
+                                    <div style="font-size:13px; color:#888; margin-bottom:16px;">kcal / 天</div>
+                                    <button id="calc-apply-btn" class="btn-create" style="width:100%;">
+                                        <i class="fas fa-check"></i> 套用為每日熱量目標
+                                    </button>
+                                </div>
+                            </div>
                             <div class="settings-group custom-group">
                                 <h3><i class="fas fa-sliders-h"></i> <span data-i18n="setPref">偏好設定</span></h3>
                                 <div class="setting-item">
