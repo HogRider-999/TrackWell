@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#d88210">
+
+    <!-- TensorFlow.js + TFLite 推論引擎 -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite@0.0.1-alpha.10/dist/tf-tflite.min.js"></script>
 </head>
@@ -85,6 +87,7 @@
                             <p id="home-quote"><span></span></p>
                         </div>
                     </div>
+                    <!-- 今日摘要快速總覽 -->
                     <div class="summary-strip">
                         <div class="summary-item">
                             <i class="fas fa-shoe-prints" style="color:#ffb347;"></i>
@@ -253,6 +256,7 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- 今日完成度進度條 -->
                         <div class="workout-progress-card">
                             <div class="wp-header">
                                 <span><i class="fas fa-tasks"></i> 今日完成度</span>
@@ -349,14 +353,15 @@
                         <div class="meal-card">
                             <div class="meal-header">
                                 <div class="meal-title">
-                                    <i class="fas fa-hamburger" style="color:var(--primary);"></i> 
+                                    <i class="fas fa-utensils" style="color:var(--primary);"></i>
                                     <h3><span data-i18n="mealTitle">餐點紀錄</span></h3>
                                 </div>
                                 <div style="display:flex; align-items:center; gap:12px;">
                                     <span class="meal-total" id="meal-total-kcal">0 kcal</span>
-                                    <i class="fas fa-trash-alt" style="color:#ff5252;cursor:pointer;" onclick="resetDiet()"></i>
+                                    <i class="fas fa-trash-alt" style="color:#ff5252;cursor:pointer;font-size:16px;opacity:0.7;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" onclick="resetDiet()"></i>
                                 </div>
                             </div>
+                            <!-- 餐別 Tabs -->
                             <div class="meal-tabs">
                                 <button class="meal-tab-btn active" onclick="setMealType('breakfast',this)">
                                     <i class="fas fa-sun"></i> <span data-i18n="mealBreakfast">早餐</span>
@@ -375,6 +380,7 @@
                                     <span class="meal-tab-kcal" id="badge-kcal-snack">0 kcal</span>
                                 </button>
                             </div>
+                            <!-- 各餐列表（切換顯示） -->
                             <div class="food-list meal-section-list" id="meal-list-breakfast"></div>
                             <div class="food-list meal-section-list" id="meal-list-lunch" style="display:none;"></div>
                             <div class="food-list meal-section-list" id="meal-list-dinner" style="display:none;"></div>
@@ -444,18 +450,27 @@
                                 <i class="fas fa-fire-alt trophy-icon"></i>
                                 <h4><span data-i18n="statsStreak">連續訓練紀錄</span></h4>
                                 <div class="streak-days" id="streak-days-val">0 <small><span data-i18n="statsDays">天</span></small></div>
+                                <p style="color:var(--primary); font-weight:bold; margin-bottom: 20px;">
+                                    <span data-i18n="statsStreakSub">保持這個節奏！</span>
+                                </p>
                                 <button class="btn-create" id="btn-checkin" onclick="performCheckIn()">
                                     <span data-i18n="btnCheckIn">今日簽到</span>
                                 </button>
                             </div>
                         </div>
                     </div>
+
+                    <!-- 體脂 & 肌肉量圖表 -->
                     <div class="stats-main-panel" style="margin-top:24px;">
                         <div class="panel-head">
-                            <h3><i class="fas fa-percentage"></i> 體脂 & 肌肉量趨勢</h3>
+                            <h3><i class="fas fa-percentage" style="color:#e91e63;"></i> 體脂 & 肌肉量趨勢</h3>
+                            <div style="display:flex; gap:16px; align-items:center; font-size:12px; font-weight:bold;">
+                                <span><span style="display:inline-block;width:12px;height:12px;background:#e91e63;border-radius:3px;margin-right:5px;"></span>體脂 %</span>
+                                <span><span style="display:inline-block;width:12px;height:12px;background:#9c27b0;border-radius:3px;margin-right:5px;"></span>肌肉 kg</span>
+                            </div>
                         </div>
-                        <div class="chart-container-lg">
-                            <div class="chart-main-bars" id="body-comp-chart"></div>
+                        <div class="chart-container-lg" style="padding-top:20px;">
+                            <div class="chart-main-bars" id="body-comp-chart" style="align-items:flex-end; gap:6px;"></div>
                         </div>
                     </div>
                 </section>
@@ -472,28 +487,30 @@
                             </div>
                             <div class="profile-info-large">
                                 <h2 id="lang-username"></h2>
-                                <span class="pro-badge"><i class="fas fa-crown"></i> <span>PRO 會員</span></span>
+                                <span class="pro-badge"><i class="fas fa-crown"></i> <span data-i18n="setPro">PRO 會員</span></span>
+                                <p><span data-i18n="setJoin">加入時間: 2026年2月</span></p>
                             </div>
                         </div>
                         <div class="settings-grid">
+                            <!-- 卡路里計算機 -->
                             <div class="settings-group custom-group">
-                                <h3><i class="fas fa-calculator"></i> <span data-i18n="calCalcTitle">每日熱量計算機</span></h3>
-                                <div class="input-grid">
-                                    <div class="input-group">
+                                <h3><i class="fas fa-calculator" style="color:#ff9800;"></i> <span data-i18n="calCalcTitle">每日熱量計算機</span></h3>
+                                <div class="input-grid" style="margin-bottom:16px;">
+                                    <div class="input-group" style="margin-bottom:0;">
                                         <label data-i18n="calCalcAge">年齡</label>
-                                        <input type="number" id="calc-age" placeholder="25">
+                                        <input type="number" id="calc-age" placeholder="25" min="10" max="100">
                                     </div>
-                                    <div class="input-group">
+                                    <div class="input-group" style="margin-bottom:0;">
                                         <label data-i18n="calCalcHeight">身高 (cm)</label>
-                                        <input type="number" id="calc-height" placeholder="170">
+                                        <input type="number" id="calc-height" placeholder="170" min="100" max="250">
                                     </div>
-                                    <div class="input-group">
+                                    <div class="input-group" style="margin-bottom:0;">
                                         <label data-i18n="calCalcWeight">體重 (kg)</label>
-                                        <input type="number" id="calc-weight" placeholder="65">
+                                        <input type="number" id="calc-weight" placeholder="65" min="20" max="300">
                                     </div>
-                                    <div class="input-group">
+                                    <div class="input-group" style="margin-bottom:0;">
                                         <label data-i18n="calCalcGender">性別</label>
-                                        <select id="calc-gender" class="modern-select">
+                                        <select id="calc-gender" class="modern-select" style="width:100%;">
                                             <option value="male" data-i18n="calCalcMale">男</option>
                                             <option value="female" data-i18n="calCalcFemale">女</option>
                                         </select>
@@ -501,16 +518,48 @@
                                 </div>
                                 <div class="input-group">
                                     <label data-i18n="calCalcActivity">活動量</label>
-                                    <select id="calc-activity" class="modern-select">
-                                        <option value="1.2" data-i18n="calCalcSedentary">久坐</option>
-                                        <option value="1.55" selected data-i18n="calCalcModerate">中度</option>
+                                    <select id="calc-activity" class="modern-select" style="width:100%;">
+                                        <option value="1.2" data-i18n="calCalcSedentary">久坐（幾乎不動）</option>
+                                        <option value="1.375" data-i18n="calCalcLight">輕度（每週1-3次）</option>
+                                        <option value="1.55" selected data-i18n="calCalcModerate">中度（每週3-5次）</option>
+                                        <option value="1.725" data-i18n="calCalcActive">高度（每週6-7次）</option>
                                         <option value="1.9" data-i18n="calCalcVeryActive">非常活躍</option>
                                     </select>
                                 </div>
-                                <button class="btn-create" style="width:100%;" onclick="calcCalories()">計算</button>
-                                <div id="calc-result" style="display:none; margin-top:15px; text-align:center;">
-                                    <div style="font-size:32px; font-weight:900; color:var(--primary);" id="calc-result-val">--</div>
-                                    <button id="calc-apply-btn" class="btn-create" style="margin-top:10px;">套用目標</button>
+                                <button class="btn-create" style="width:100%; margin-bottom:16px;" onclick="calcCalories()">
+                                    <i class="fas fa-calculator"></i> <span data-i18n="calCalcBtn">計算</span>
+                                </button>
+                                <div id="calc-result" style="display:none; background:rgba(216,130,16,0.1); border:1px solid rgba(216,130,16,0.3); border-radius:16px; padding:20px; text-align:center;">
+                                    <div style="font-size:13px; color:#888; margin-bottom:8px;" data-i18n="calCalcResult">建議每日熱量</div>
+                                    <div style="font-size:42px; font-weight:900; color:var(--primary);" id="calc-result-val">--</div>
+                                    <div style="font-size:13px; color:#888; margin-bottom:16px;">kcal / 天</div>
+                                    <button id="calc-apply-btn" class="btn-create" style="width:100%;">
+                                        <i class="fas fa-check"></i> 套用為每日熱量目標
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="settings-group custom-group">
+                                <h3><i class="fas fa-sliders-h"></i> <span data-i18n="setPref">偏好設定</span></h3>
+                                <div class="setting-item">
+                                    <div class="set-info">
+                                        <strong><span data-i18n="setGoal">健身目標</span></strong>
+                                        <span><span data-i18n="setGoalSub">設定您的主要訓練目標</span></span>
+                                    </div>
+                                    <select id="goal-select" class="modern-select" onchange="changeGoal(this.value)">
+                                        <option value="bulking" data-i18n="goalBulking">增肌</option>
+                                        <option value="cutting" data-i18n="goalCutting">減脂</option>
+                                        <option value="maintain" data-i18n="goalMaintain">維持</option>
+                                    </select>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="set-info">
+                                        <strong><span data-i18n="setLang">介面語言</span></strong>
+                                        <span><span data-i18n="setLangSub">選擇應用程式顯示語言</span></span>
+                                    </div>
+                                    <select id="lang-select" class="modern-select">
+                                        <option value="zh">繁體中文</option>
+                                        <option value="en">English</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -522,110 +571,304 @@
             </div>
         </main>
 
+        <!-- ══ MODALS ══ -->
         <div id="steps-settings-modal" class="modal-overlay" onclick="closeModal(event, 'steps-settings-modal')">
             <div class="modal-content">
-                <div class="modal-header"><h3>步數目標設定</h3><i class="fas fa-times close-btn" onclick="closeModal(event, 'steps-settings-modal')"></i></div>
+                <div class="modal-header">
+                    <h3>步數目標設定</h3>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'steps-settings-modal')"></i>
+                </div>
                 <div class="modal-body">
-                    <div class="input-group"><label>今日步數</label><input type="number" id="input-steps-now"></div>
-                    <div class="input-group"><label>目標步數</label><input type="number" id="input-steps-goal"></div>
+                    <div class="input-group">
+                        <label>今日步數</label>
+                        <input type="number" id="input-steps-now">
+                    </div>
+                    <div class="input-group">
+                        <label>目標步數</label>
+                        <input type="number" id="input-steps-goal">
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" onclick="document.getElementById('steps-settings-modal').style.display='none'">取消</button>
-                    <button class="btn-create" onclick="saveStepsSettings()">儲存</button>
+                    <button class="btn-cancel" onclick="document.getElementById('steps-settings-modal').style.display='none'">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <button class="btn-create" onclick="saveStepsSettings()">
+                        <span data-i18n="btnSave">儲存</span>
+                    </button>
                 </div>
             </div>
         </div>
 
         <div id="cal-goal-modal" class="modal-overlay" onclick="closeModal(event, 'cal-goal-modal')">
             <div class="modal-content">
-                <div class="modal-header"><h3>飲食目標設定</h3><i class="fas fa-times close-btn" onclick="closeModal(event, 'cal-goal-modal')"></i></div>
+                <div class="modal-header">
+                    <h3>飲食與營養目標設定</h3>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'cal-goal-modal')"></i>
+                </div>
                 <div class="modal-body">
-                    <div class="input-group"><label>每日熱量目標 (kcal)</label><input type="number" id="input-cal-goal"></div>
+                    <div class="input-group">
+                        <label>每日總熱量目標 (kcal)</label>
+                        <input type="number" id="input-cal-goal">
+                    </div>
                     <div class="input-grid">
-                        <div class="input-group"><label>碳水 (g)</label><input type="number" id="input-carbs-goal"></div>
-                        <div class="input-group"><label>蛋白 (g)</label><input type="number" id="input-protein-goal"></div>
+                        <div class="input-group">
+                            <label>碳水 (g)</label>
+                            <input type="number" id="input-carbs-goal">
+                        </div>
+                        <div class="input-group">
+                            <label>蛋白 (g)</label>
+                            <input type="number" id="input-protein-goal">
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" onclick="document.getElementById('cal-goal-modal').style.display='none'">取消</button>
-                    <button class="btn-create" onclick="saveCalSettings()">儲存</button>
+                    <button class="btn-cancel" onclick="document.getElementById('cal-goal-modal').style.display='none'">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <button class="btn-create" onclick="saveCalSettings()">
+                        <span data-i18n="btnSave">儲存</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="activity-input-modal" class="modal-overlay" onclick="closeModal(event, 'activity-input-modal')">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><span data-i18n="dietActivity">新增運動消耗</span></h3>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'activity-input-modal')"></i>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <label>預設運動類型</label>
+                        <select id="preset-activity" class="modern-select" onchange="updatePresetBurn(this.value)">
+                            <option value="0">選擇運動類型...</option>
+                            <option value="450">重量訓練 (1小時)</option>
+                            <option value="600">跑步 (1小時)</option>
+                            <option value="300">快走 (1小時)</option>
+                            <option value="500">游泳 (1小時)</option>
+                            <option value="400">自行車 (1小時)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>自訂熱量 (kcal)</label>
+                        <input type="number" id="input-burn-kcal" placeholder="手動輸入消耗熱量">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-cancel" onclick="document.getElementById('activity-input-modal').style.display='none'">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <button class="btn-create" onclick="saveActivity()">
+                        <span data-i18n="btnSave">新增消耗</span>
+                    </button>
                 </div>
             </div>
         </div>
 
         <div id="body-input-modal" class="modal-overlay" onclick="closeModal(event, 'body-input-modal')">
             <div class="modal-content">
-                <div class="modal-header"><h3>今日身體數據</h3><i class="fas fa-times close-btn" onclick="closeModal(event, 'body-input-modal')"></i></div>
+                <div class="modal-header">
+                    <h3><i class="fas fa-file-medical text-primary"></i> <span data-i18n="statsUpdateTitle">紀錄今日數據與目標</span></h3>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'body-input-modal')"></i>
+                </div>
                 <div class="modal-body">
-                    <div class="input-group"><label>身高 (cm)</label><input type="number" id="input-height" step="0.1"></div>
-                    <div class="input-grid">
-                        <div class="input-group"><label>體重 (kg)</label><input type="number" id="input-weight" step="0.1"></div>
-                        <div class="input-group"><label>目標體重 (kg)</label><input type="number" id="input-weight-goal" step="0.1"></div>
+                    <div class="input-group">
+                        <label><i class="fas fa-ruler-vertical"></i> 身高 (cm)</label>
+                        <input type="number" id="input-height" step="0.1" placeholder="例如: 160">
                     </div>
                     <div class="input-grid">
-                        <div class="input-group"><label>體脂 (%)</label><input type="number" id="input-fat" step="0.1"></div>
-                        <div class="input-group"><label>肌肉 (kg)</label><input type="number" id="input-muscle" step="0.1"></div>
+                        <div class="input-group">
+                            <label><i class="fas fa-weight"></i> <span data-i18n="statsWeight">體重</span> (kg)</label>
+                            <input type="number" id="input-weight" step="0.1" placeholder="0.0">
+                        </div>
+                        <div class="input-group">
+                            <label><i class="fas fa-bullseye"></i> 目標體重 (kg)</label>
+                            <input type="number" id="input-weight-goal" step="0.1" placeholder="0.0">
+                        </div>
+                    </div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label><i class="fas fa-percentage"></i> <span data-i18n="statsFat">體脂肪</span> (%)</label>
+                            <input type="number" id="input-fat" step="0.1" placeholder="0.0">
+                        </div>
+                        <div class="input-group">
+                            <label><i class="fas fa-child"></i> <span data-i18n="statsMuscle">骨骼肌重</span> (kg)</label>
+                            <input type="number" id="input-muscle" step="0.1" placeholder="0.0">
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" onclick="document.getElementById('body-input-modal').style.display='none'">取消</button>
-                    <button class="btn-create" onclick="saveBodyStats()">儲存數據</button>
+                    <button class="btn-cancel" onclick="document.getElementById('body-input-modal').style.display='none'">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <button class="btn-create" onclick="saveBodyStats()">
+                        <span data-i18n="btnSave">儲存數據</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="countdown-settings-modal" class="modal-overlay" onclick="closeModal(event, 'countdown-settings-modal')">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><span data-i18n="mCountTitle">自訂倒數事件</span></h3>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'countdown-settings-modal')"></i>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <label><span data-i18n="mCountName">事件名稱</span></label>
+                        <input type="text" id="custom-event-name" data-i18n="mCountNameP" placeholder="例如: 2026 統測">
+                    </div>
+                    <div class="input-group">
+                        <label><span data-i18n="mCountDate">目標日期</span></label>
+                        <input type="date" id="custom-event-date">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-cancel" onclick="document.getElementById('countdown-settings-modal').style.display='none'">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <button class="btn-create" onclick="saveCountdownSettings()">
+                        <span data-i18n="btnSave">儲存設定</span>
+                    </button>
                 </div>
             </div>
         </div>
 
         <div id="ai-scan-modal" class="modal-overlay" onclick="closeModal(event, 'ai-scan-modal')">
-            <div class="modal-content">
-                <div class="modal-header"><h3>AI 食物辨識</h3><i class="fas fa-times close-btn" onclick="closeModal(event, 'ai-scan-modal')"></i></div>
-                <div class="modal-body">
+            <div class="modal-content ai-modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-robot text-primary"></i> <span data-i18n="mAiTitle">AI 智能食物辨識</span></h3>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'ai-scan-modal')"></i>
+                </div>
+                <div class="modal-body ai-body">
                     <div class="image-upload-area" onclick="document.getElementById('file-input').click()">
                         <div class="upload-placeholder" id="upload-placeholder">
                             <i class="fas fa-cloud-upload-alt" style="font-size:30px;"></i>
-                            <p>點擊上傳食物照片</p>
+                            <p><span data-i18n="mAiUpload">點擊或拖曳上傳食物照片</span></p>
+                            <span>已掛載: model.tflite / labels.txt</span>
                         </div>
                         <img id="food-preview" class="food-preview" style="display:none;">
                         <div class="scanner-laser" id="scanner-laser" style="display:none;"></div>
                     </div>
                     <input type="file" id="file-input" accept="image/*" style="display:none;" onchange="previewImage(event)">
-                    <div id="ai-result-area" style="display:none;" class="ai-result-area">
-                        <h4 id="scan-status">分析中...</h4>
-                        <div class="detected-food"><strong id="ai-food-name">--</strong></div>
-                        <div class="detected-macros" id="ai-food-cal">-- kcal</div>
+                    <div class="ai-result-area" id="ai-result-area" style="display:none;">
+                        <h4 class="scan-status" id="scan-status"><span data-i18n="mAiStatus">分析中...</span></h4>
+                        <div class="detected-food">
+                            <span class="label"><span data-i18n="mAiResult">辨識結果:</span></span>
+                            <strong id="ai-food-name">--</strong>
+                        </div>
+                        <div class="detected-macros">
+                            <span id="ai-food-cal">-- kcal</span>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" id="ai-reset-btn" style="display:none;" onclick="resetAIScanner()">重新辨識</button>
-                    <button class="btn-create" id="ai-analyze-btn" disabled onclick="startAIScan()">啟動推論</button>
-                    <button class="btn-create" id="ai-add-btn" style="display:none;" onclick="addScannedFood()">加入紀錄</button>
+                    <button class="btn-cancel" onclick="document.getElementById('ai-scan-modal').style.display='none'">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <!-- 重新辨識：辨識完成後才出現 -->
+                    <button class="btn-cancel" id="ai-reset-btn" style="display:none; border-color:#888;" onclick="resetAIScanner()">
+                        <i class="fas fa-redo" style="margin-right:6px;"></i>重新辨識
+                    </button>
+                    <button class="btn-create ai-analyze-btn" id="ai-analyze-btn" disabled onclick="startAIScan()">
+                        <span data-i18n="mAiBtn">啟動推論模型</span>
+                    </button>
+                    <button class="btn-create" id="ai-add-btn" style="display:none;" onclick="addScannedFood()">
+                        <span data-i18n="mAiAddBtn">加入飲食紀錄</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="manual-food-modal" class="modal-overlay" onclick="closeModal(event, 'manual-food-modal')">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-pen text-primary"></i> <span data-i18n="mManTitle">手動輸入食物</span></h3>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'manual-food-modal')"></i>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <label><span data-i18n="mManName">食物名稱</span></label>
+                        <input type="text" id="manual-name" data-i18n="mManNameP" placeholder="例如: 雞胸肉沙拉">
+                    </div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label><span data-i18n="mManKcal">熱量 (kcal)</span></label>
+                            <input type="number" id="manual-kcal" placeholder="0" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label><span data-i18n="mManCarbs">碳水 (g)</span></label>
+                            <input type="number" id="manual-carbs" placeholder="0" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label><span data-i18n="mManPro">蛋白質 (g)</span></label>
+                            <input type="number" id="manual-protein" placeholder="0" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label><span data-i18n="mManFat">脂肪 (g)</span></label>
+                            <input type="number" id="manual-fat" placeholder="0" min="0">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-cancel" onclick="document.getElementById('manual-food-modal').style.display='none'">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <button class="btn-create" onclick="saveManualFood()">
+                        <span data-i18n="mManAddBtn">加入紀錄</span>
+                    </button>
                 </div>
             </div>
         </div>
 
         <div id="custom-plan-modal" class="modal-overlay" onclick="closeModal(event, 'custom-plan-modal')">
-            <div class="modal-content">
-                <div class="modal-header"><h3>建立訓練計畫</h3><i class="fas fa-times close-btn" onclick="closeModal(event, 'custom-plan-modal')"></i></div>
+            <div class="modal-content" style="width: 500px; max-height: 90vh; overflow-y: auto;">
+                <div class="modal-header">
+                    <h3><span data-i18n="mPlanTitle">建立新訓練計畫</span></h3>
+                    <i class="fas fa-times close-btn" onclick="closeModal(event, 'custom-plan-modal')"></i>
+                </div>
                 <div class="modal-body">
-                    <div class="input-group"><label>計畫名稱</label><input type="text" id="plan-name"></div>
                     <div class="input-group">
-                        <label>選擇圖標</label>
+                        <label><span data-i18n="mPlanName">計畫名稱</span></label>
+                        <input type="text" id="plan-name" data-i18n="mPlanNameP" placeholder="例如: 腿部加強...">
+                    </div>
+                    <div class="input-group">
+                        <label><span data-i18n="mPlanIcon">選擇封面圖標</span></label>
                         <div class="icon-selector">
-                            <img src="./Leg day.png" class="preset-icon active" onclick="selectPresetIcon(this, './Leg day.png')">
-                            <img src="./Chest day.png" class="preset-icon" onclick="selectPresetIcon(this, './Chest day.png')">
-                            <img src="./Back day.png" class="preset-icon" onclick="selectPresetIcon(this, './Back day.png')">
-                            <div class="local-icon-upload" onclick="document.getElementById('plan-icon-upload').click()"><i class="fas fa-upload"></i></div>
-                            <input type="file" id="plan-icon-upload" style="display:none;" onchange="previewPlanIcon(event)">
+                            <img src="./Leg day.png" class="preset-icon active" onclick="selectPresetIcon(this, './Leg day.png')" onerror="this.src='./custom.jpg'">
+                            <img src="./Chest day.png" class="preset-icon" onclick="selectPresetIcon(this, './Chest day.png')" onerror="this.src='./custom.jpg'">
+                            <img src="./Back day.png" class="preset-icon" onclick="selectPresetIcon(this, './Back day.png')" onerror="this.src='./custom.jpg'">
+                            <img src="./Shoulder day.png" class="preset-icon" onclick="selectPresetIcon(this, './Shoulder day.png')" onerror="this.src='./custom.jpg'">
+                            <img src="./Arm day.png" class="preset-icon" onclick="selectPresetIcon(this, './Arm day.png')" onerror="this.src='./custom.jpg'">
+                            <div class="local-icon-upload" onclick="document.getElementById('plan-icon-upload').click()">
+                                <i class="fas fa-upload"></i>
+                            </div>
+                            <input type="file" id="plan-icon-upload" style="display:none;" accept="image/*" onchange="previewPlanIcon(event)">
                         </div>
                     </div>
-                    <div id="custom-ex-list"></div>
-                    <div class="add-ex-form">
-                        <input type="text" id="ex-name" placeholder="動作名稱">
-                        <input type="text" id="ex-meta" placeholder="組數/重量">
-                        <input type="text" id="ex-desc" placeholder="目標肌群">
-                        <button onclick="addCustomExToList()">新增動作</button>
+                    <div class="input-group">
+                        <label><span data-i18n="mPlanExList">自訂動作清單</span></label>
+                        <div id="custom-ex-list"></div>
+                        <div class="add-ex-form">
+                            <input type="text" id="ex-name" data-i18n="mPlanExName" placeholder="動作名稱 (例: 槓鈴深蹲)">
+                            <input type="text" id="ex-meta" data-i18n="mPlanExMeta" placeholder="組數/重量 (例: 4組x12次 | 50kg)">
+                            <input type="text" id="ex-desc" data-i18n="mPlanExDesc" placeholder="目標肌群 (例: 股四頭肌)">
+                            <button onclick="addCustomExToList()">
+                                <i class="fas fa-plus"></i> 
+                                <span data-i18n="mPlanExAddBtn">新增動作</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-create" onclick="saveCustomPlan()">建立計畫</button>
+                    <button class="btn-cancel" onclick="document.getElementById('custom-plan-modal').style.display='none'">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <button class="btn-create" onclick="saveCustomPlan()">
+                        <span data-i18n="btnCreate">建立計畫</span>
+                    </button>
                 </div>
             </div>
         </div>
