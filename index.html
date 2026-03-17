@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TrackWell</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome 6.5.2 (支援所有新 icon) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W+g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#d88210">
 
@@ -88,7 +87,12 @@
                             <p id="home-quote"><span></span></p>
                         </div>
                     </div>
-                    </div>
+                    <!-- 今日摘要快速總覽 -->
+                    <div class="summary-strip">
+                        <div class="summary-item">
+                            <i class="fas fa-shoe-prints" style="color:#ffb347;"></i>
+                            <div><span class="summary-val" id="summary-steps">0</span><span class="summary-lbl" data-i18n="summarySteps">步數</span></div>
+                        </div>
                         <div class="summary-item">
                             <i class="fas fa-fire" style="color:#ff7043;"></i>
                             <div><span class="summary-val" id="summary-cal">0</span><span class="summary-lbl" data-i18n="summaryCal">熱量</span></div>
@@ -364,7 +368,7 @@
                                     <span class="meal-tab-kcal" id="badge-kcal-breakfast">0 kcal</span>
                                 </button>
                                 <button class="meal-tab-btn" onclick="setMealType('lunch',this)">
-                                    <i class="fas fa-sun"></i> <span data-i18n="mealLunch">午餐</span>
+                                    <i class="fas fa-cloud-sun"></i> <span data-i18n="mealLunch">午餐</span>
                                     <span class="meal-tab-kcal" id="badge-kcal-lunch">0 kcal</span>
                                 </button>
                                 <button class="meal-tab-btn" onclick="setMealType('dinner',this)">
@@ -372,7 +376,7 @@
                                     <span class="meal-tab-kcal" id="badge-kcal-dinner">0 kcal</span>
                                 </button>
                                 <button class="meal-tab-btn" onclick="setMealType('snack',this)">
-                                    <i class="fas fa-apple-alt"></i> <span data-i18n="mealSnack">點心</span>
+                                    <i class="fas fa-cookie"></i> <span data-i18n="mealSnack">點心</span>
                                     <span class="meal-tab-kcal" id="badge-kcal-snack">0 kcal</span>
                                 </button>
                             </div>
