@@ -81,22 +81,11 @@
             </header>
 
             <div id="content-area">
-                <section id="home" class="page active">
+                                <section id="home" class="page active">
                     <div class="hero-banner-lg">
                         <div class="hero-txt">
                             <h1 class="gradient-text" id="home-title"></h1>
                             <p id="home-quote"><span></span></p>
-                        </div>
-                    </div>
-                    </div>
-                        <div class="summary-item">
-                            <div><span class="summary-val" id="summary-water">0 ml</span><span class="summary-lbl" data-i18n="summaryWater">水分</span></div>
-                        </div>
-                        <div class="summary-item">
-                            <div><span class="summary-val" id="summary-workout">--</span><span class="summary-lbl" data-i18n="summaryWorkout">訓練</span></div>
-                        </div>
-                        <div class="summary-item">
-                            <div><span class="summary-val" id="summary-steps">0</span><span class="summary-lbl" data-i18n="summarySteps">步數</span></div>
                         </div>
                     </div>
                     <div class="dashboard-grid-lg">
@@ -221,7 +210,7 @@
                     </div>
                 </section>
 
-                <section id="workout" class="page">
+                                <section id="workout" class="page">
                     <!-- ① 課表系列選擇頁 -->
                     <div id="workout-series" class="workout-series-page">
                         <div class="section-header-lg">
@@ -235,8 +224,8 @@
                                     <h3>5 Day Split</h3>
                                     <p>五天循環模式・肌肉最大生長空間</p>
                                     <div class="series-tags">
-                                        <span class="stag standard" onclick="event.stopPropagation(); selectSeriesPlan('5day','standard')">Standard</span>
-                                        <span class="stag pro" onclick="event.stopPropagation(); selectSeriesPlan('5day','pro')">Pro · Lee Priest</span>
+                                        <span class="stag standard" onclick="event.stopPropagation();selectSeriesPlan('5day','standard')">Standard</span>
+                                        <span class="stag pro" onclick="event.stopPropagation();selectSeriesPlan('5day','pro')">Pro · Lee Priest</span>
                                     </div>
                                 </div>
                             </div>
@@ -246,19 +235,19 @@
                                     <h3>Bro Split</h3>
                                     <p>一週一部位・HIT 深度打擊</p>
                                     <div class="series-tags">
-                                        <span class="stag standard" onclick="event.stopPropagation(); selectSeriesPlan('bro','standard')">Standard</span>
-                                        <span class="stag pro" onclick="event.stopPropagation(); selectSeriesPlan('bro','pro')">Pro · Yates/Mentzer</span>
+                                        <span class="stag standard" onclick="event.stopPropagation();selectSeriesPlan('bro','standard')">Standard</span>
+                                        <span class="stag pro" onclick="event.stopPropagation();selectSeriesPlan('bro','pro')">Pro · Yates/Mentzer</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="series-card" onclick="selectSeries('ul')">
                                 <div class="series-icon">UL</div>
                                 <div class="series-info">
-                                    <h3>Upper & Lower</h3>
+                                    <h3>Upper &amp; Lower</h3>
                                     <p>上下肢分化・高頻率訓練</p>
                                     <div class="series-tags">
-                                        <span class="stag standard" onclick="event.stopPropagation(); selectSeriesPlan('ul','standard')">Standard</span>
-                                        <span class="stag pro" onclick="event.stopPropagation(); selectSeriesPlan('ul','pro')">Pro · Performance Pro</span>
+                                        <span class="stag standard" onclick="event.stopPropagation();selectSeriesPlan('ul','standard')">Standard</span>
+                                        <span class="stag pro" onclick="event.stopPropagation();selectSeriesPlan('ul','pro')">Pro · Performance Pro</span>
                                     </div>
                                 </div>
                             </div>
@@ -268,7 +257,7 @@
                                     <h3>Custom</h3>
                                     <p>TrackWell 自訂引擎・完全個人化</p>
                                     <div class="series-tags">
-                                        <span class="stag engine" onclick="event.stopPropagation(); selectSeriesPlan('custom','engine')">TrackWell Engine</span>
+                                        <span class="stag engine" onclick="event.stopPropagation();selectSeriesPlan('custom','engine')">TrackWell Engine</span>
                                     </div>
                                 </div>
                             </div>
@@ -277,29 +266,24 @@
 
                     <!-- ② 系列內課表列表頁 -->
                     <div id="workout-home" style="display:none;">
-                        <div class="detail-top-nav" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="detail-top-nav" style="display:flex;justify-content:space-between;align-items:center;">
                             <button class="back-modern-btn" onclick="backToSeriesPage()">
                                 <i class="fas fa-arrow-left"></i> 返回選擇
                             </button>
                             <div id="series-plan-badge" class="series-plan-badge"></div>
                         </div>
-                        <div class="section-header-lg" id="workout-home-header">
+                        <div class="section-header-lg">
                             <h2 class="gradient-text" id="workout-series-title">專屬訓練課表</h2>
                             <p class="meta-desc-lg" id="workout-series-desc">點擊卡片開啟訓練模式，或建立新計畫</p>
                         </div>
-                        <!-- 預設課表（系列課表） -->
                         <div id="preset-plan-grid" class="workout-grid-lg"></div>
-                        <!-- 分隔線（只在有自訂課表時顯示）-->
-                        <div id="custom-divider" class="custom-divider" style="display:none;">
-                            <span>自訂課表</span>
-                        </div>
-                        <!-- 使用者自訂課表 + 新增按鈕 -->
+                        <div id="custom-divider" class="custom-divider" style="display:none;"><span>自訂課表</span></div>
                         <div class="workout-grid-lg" id="workout-card-grid"></div>
                     </div>
 
                     <!-- ③ 訓練詳情頁 -->
                     <div id="workout-detail" style="display:none">
-                        <div class="detail-top-nav" style="display: flex; justify-content: space-between;">
+                        <div class="detail-top-nav" style="display:flex;justify-content:space-between;">
                             <button class="back-modern-btn" onclick="backToWorkoutHome()">
                                 <i class="fas fa-arrow-left"></i> <span data-i18n="btnBack">返回選擇</span>
                             </button>
@@ -313,16 +297,15 @@
                                 <p class="type-tag">TRAINING MODE</p>
                                 <h1 id="current-day-title">今日訓練</h1>
                                 <div class="detail-meta-lg">
-                                    <span class="author"><span data-i18n="wAuthor">自訂課表</span></span> • 
+                                    <span class="author"><span data-i18n="wAuthor">自訂課表</span></span> •
                                     <span class="stats-txt" id="workout-target-txt">目標: 增肌</span>
                                 </div>
                             </div>
                         </div>
-                        <!-- 今日完成度進度條 -->
                         <div class="workout-progress-card">
                             <div class="wp-header">
                                 <span><i class="fas fa-tasks"></i> 今日完成度</span>
-                                <span id="workout-progress-label" style="color:var(--primary); font-weight:800;">0 / 0 已完成 (0%)</span>
+                                <span id="workout-progress-label" style="color:var(--primary);font-weight:800;">0 / 0 已完成 (0%)</span>
                             </div>
                             <div class="wp-track">
                                 <div id="workout-progress-bar" class="wp-fill" style="width:0%"></div>
