@@ -1,3 +1,467 @@
+// ══════════════════════════════════════════════════════
+// 預設課表資料庫
+// ══════════════════════════════════════════════════════
+const PRESET_WORKOUT_PLANS = {
+    '5day-standard': {
+        name: '5 Day Split · Standard',
+        tag: 'Mass Building',
+        tagColor: '#4caf50',
+        icon: '💪',
+        days: [
+            {
+                title: '胸部日 (Chest)',
+                icon: './Chest day.png',
+                exercises: [
+                    { name: '槓鈴臥推', meta: '4 組 x 8-10 次 | 休息 90秒', desc: '胸大肌・三頭肌' },
+                    { name: '啞鈴上斜臥推', meta: '3 組 x 10-12 次 | 休息 75秒', desc: '上胸・前三角' },
+                    { name: '雙槓撐體', meta: '3 組 x 力竭 | 休息 60秒', desc: '下胸・三頭肌' },
+                ]
+            },
+            {
+                title: '背部日 (Back)',
+                icon: './Back day.png',
+                exercises: [
+                    { name: '引體向上', meta: '4 組 x 8 次 | 休息 90秒', desc: '背闊肌・二頭肌' },
+                    { name: '槓鈴划船', meta: '4 組 x 10 次 | 休息 90秒', desc: '中背・菱形肌' },
+                    { name: '滑輪下拉', meta: '3 組 x 12 次 | 休息 75秒', desc: '背闊肌' },
+                ]
+            },
+            {
+                title: '腿部日 (Legs)',
+                icon: './Leg day.png',
+                exercises: [
+                    { name: '槓鈴深蹲', meta: '4 組 x 8-10 次 | 休息 90秒', desc: '股四頭肌・臀部' },
+                    { name: '羅馬尼亞硬舉', meta: '3 組 x 10 次 | 休息 90秒', desc: '腿後腱・臀部' },
+                    { name: '腿推機', meta: '3 組 x 12 次 | 休息 75秒', desc: '股四頭肌' },
+                    { name: '坐姿腿伸展', meta: '3 組 x 15 次 | 休息 60秒', desc: '股四頭肌孤立' },
+                ]
+            },
+            {
+                title: '肩部日 (Shoulders)',
+                icon: './Shoulder day.png',
+                exercises: [
+                    { name: '啞鈴肩推', meta: '4 組 x 10 次 | 休息 90秒', desc: '三角肌全部' },
+                    { name: '側平舉', meta: '4 組 x 12-15 次 | 休息 60秒', desc: '三角肌側束' },
+                    { name: '俯身側平舉', meta: '3 組 x 15 次 | 休息 60秒', desc: '三角肌後束' },
+                ]
+            },
+            {
+                title: '手臂日 (Arms)',
+                icon: './Arm day.png',
+                exercises: [
+                    { name: '槓鈴彎舉', meta: '4 組 x 10 次 | 休息 75秒', desc: '二頭肌' },
+                    { name: '錘式彎舉', meta: '3 組 x 12 次 | 休息 60秒', desc: '肱橈肌・二頭肌' },
+                    { name: '窄握臥推', meta: '4 組 x 10 次 | 休息 75秒', desc: '三頭肌' },
+                    { name: '滑輪下壓', meta: '3 組 x 12-15 次 | 休息 60秒', desc: '三頭肌孤立' },
+                ]
+            }
+        ]
+    },
+    '5day-pro': {
+        name: '5 Day Split · Pro',
+        tag: 'Lee Priest Style',
+        tagColor: '#ff9800',
+        icon: '🔥',
+        days: [
+            {
+                title: '胸部日 · Pro',
+                icon: './Chest day.png',
+                exercises: [
+                    { name: '上斜史密斯臥推', meta: '6 組 x 12-15 次 | 休息 60秒', desc: '上胸・極高音量' },
+                    { name: '啞鈴平躺飛鳥', meta: '5 組 x 15 次 | 保持肌肉張力', desc: '胸大肌孤立' },
+                    { name: '纜繩交叉飛鳥', meta: '4 組 x 20 次 | 最後一組遞減組', desc: '胸肌全程' },
+                    { name: '伏地挺身', meta: '3 組 x 力竭 | 休息 45秒', desc: '收尾泵感' },
+                ]
+            },
+            {
+                title: '背部日 · Pro',
+                icon: './Back day.png',
+                exercises: [
+                    { name: '引體向上', meta: '5 組 x 12 次 | 休息 60秒', desc: '背闊肌' },
+                    { name: '槓鈴划船', meta: '5 組 x 12-15 次 | 休息 60秒', desc: '中背厚度' },
+                    { name: 'T-Bar 划船', meta: '4 組 x 15 次 | 休息 60秒', desc: '背部密度' },
+                    { name: '直臂滑輪下壓', meta: '4 組 x 20 次 | 休息 45秒', desc: '背闊肌孤立' },
+                ]
+            },
+            {
+                title: '腿部日 · Pro',
+                icon: './Leg day.png',
+                exercises: [
+                    { name: '腿推機', meta: '6 組 x 15-20 次 | 休息 60秒', desc: '股四頭肌・大音量' },
+                    { name: '哈克深蹲', meta: '5 組 x 15 次 | 休息 60秒', desc: '股四頭肌下段' },
+                    { name: '坐姿腿伸展', meta: '5 組 x 20 次 | 最後一組遞減組', desc: '孤立燃燒' },
+                    { name: '腿彎舉', meta: '4 組 x 15 次 | 休息 60秒', desc: '腿後腱' },
+                ]
+            },
+            {
+                title: '肩部日 · Pro',
+                icon: './Shoulder day.png',
+                exercises: [
+                    { name: '啞鈴肩推', meta: '5 組 x 12-15 次 | 休息 60秒', desc: '三角肌' },
+                    { name: '側平舉', meta: '6 組 x 20 次 | 休息 45秒', desc: '側束爆裂' },
+                    { name: '纜繩側平舉', meta: '4 組 x 20 次 | 交替進行', desc: '側束孤立' },
+                    { name: '俯身飛鳥', meta: '4 組 x 15 次 | 休息 45秒', desc: '後束' },
+                ]
+            },
+            {
+                title: '手臂日 · Pro',
+                icon: './Arm day.png',
+                exercises: [
+                    { name: '纜繩彎舉', meta: '5 組 x 15 次 | 休息 45秒', desc: '二頭肌' },
+                    { name: '集中彎舉', meta: '4 組 x 15 次 | 每邊', desc: '二頭肌峰值' },
+                    { name: '滑輪下壓', meta: '5 組 x 15-20 次 | 休息 45秒', desc: '三頭肌' },
+                    { name: '過頭三頭伸展', meta: '4 組 x 15 次 | 休息 45秒', desc: '三頭肌長頭' },
+                ]
+            }
+        ]
+    },
+    'bro-standard': {
+        name: 'Bro Split · Standard',
+        tag: 'Classic Hypertrophy',
+        tagColor: '#2196f3',
+        icon: '🏋️',
+        days: [
+            {
+                title: '胸部日',
+                icon: './Chest day.png',
+                exercises: [
+                    { name: '槓鈴臥推', meta: '4 組 x 10 次 | 休息 90秒', desc: '胸大肌' },
+                    { name: '上斜啞鈴臥推', meta: '3 組 x 12 次 | 休息 75秒', desc: '上胸' },
+                    { name: '蝴蝶機夾胸', meta: '3 組 x 12 次 | 休息 60秒', desc: '胸肌孤立' },
+                ]
+            },
+            {
+                title: '背部日',
+                icon: './Back day.png',
+                exercises: [
+                    { name: '滑輪下拉', meta: '4 組 x 10 次 | 休息 90秒', desc: '背闊肌' },
+                    { name: '坐姿划船', meta: '3 組 x 12 次 | 休息 90秒', desc: '中背' },
+                    { name: '單臂啞鈴划船', meta: '3 組 x 10 次 | 每邊 | 休息 60秒', desc: '背部密度' },
+                ]
+            },
+            {
+                title: '腿部日',
+                icon: './Leg day.png',
+                exercises: [
+                    { name: '槓鈴深蹲', meta: '4 組 x 10 次 | 休息 90秒', desc: '股四頭肌' },
+                    { name: '腿推機', meta: '3 組 x 12 次 | 休息 75秒', desc: '股四頭肌' },
+                    { name: '腿彎舉', meta: '3 組 x 12 次 | 休息 60秒', desc: '腿後腱' },
+                ]
+            },
+            {
+                title: '肩部日',
+                icon: './Shoulder day.png',
+                exercises: [
+                    { name: '槓鈴肩推', meta: '4 組 x 10 次 | 休息 90秒', desc: '三角肌' },
+                    { name: '啞鈴側平舉', meta: '3 組 x 15 次 | 休息 60秒', desc: '側束' },
+                    { name: '啞鈴前平舉', meta: '3 組 x 12 次 | 休息 60秒', desc: '前束' },
+                ]
+            },
+            {
+                title: '手臂日',
+                icon: './Arm day.png',
+                exercises: [
+                    { name: '槓鈴彎舉', meta: '4 組 x 10 次 | 休息 75秒', desc: '二頭肌' },
+                    { name: '繩索下壓', meta: '4 組 x 12 次 | 休息 60秒', desc: '三頭肌' },
+                    { name: '錘式彎舉', meta: '3 組 x 12 次 | 休息 60秒', desc: '二頭外側' },
+                ]
+            }
+        ]
+    },
+    'bro-pro': {
+        name: 'Bro Split · Pro',
+        tag: 'Hardcore HIT',
+        tagColor: '#f44336',
+        icon: '⚡',
+        days: [
+            {
+                title: '胸部 · HIT',
+                icon: './Chest day.png',
+                exercises: [
+                    { name: '槓鈴臥推（正式組）', meta: '2組熱身 + 1組正式 | 力竭+2次強迫次數', desc: '胸大肌完全力竭' },
+                    { name: '上斜啞鈴臥推', meta: '1組熱身 + 1組正式 | 至完全力竭', desc: '上胸孤立打擊' },
+                    { name: '蝴蝶機夾胸', meta: '1 組 x 力竭 | 慢速離心4秒', desc: '收尾孤立' },
+                ]
+            },
+            {
+                title: '背部 · HIT',
+                icon: './Back day.png',
+                exercises: [
+                    { name: '槓鈴划船（正式組）', meta: '2組熱身 + 1組正式 | 至完全力竭+強迫次數', desc: '中背摧毀' },
+                    { name: '窄握下拉', meta: '1組熱身 + 1組正式 | 控制離心4秒', desc: '背闊肌' },
+                    { name: '硬舉', meta: '1 組 x 6-8 次 | 挑戰巔峰重量', desc: '全身複合' },
+                ]
+            },
+            {
+                title: '腿部 · HIT',
+                icon: './Leg day.png',
+                exercises: [
+                    { name: '腿推機（正式組）', meta: '2組熱身 + 1組正式 | 至完全力竭', desc: '股四頭肌' },
+                    { name: '槓鈴深蹲', meta: '1組熱身 + 1組正式 | 力竭', desc: '全腿複合' },
+                    { name: '腿彎舉', meta: '1 組 x 力竭 | 慢速控制', desc: '腿後腱' },
+                ]
+            },
+            {
+                title: '肩部 · HIT',
+                icon: './Shoulder day.png',
+                exercises: [
+                    { name: '槓鈴肩推（正式組）', meta: '2組熱身 + 1組正式 | 至力竭', desc: '三角肌' },
+                    { name: '啞鈴側平舉', meta: '1 組 x 力竭 | 之後立刻遞減組', desc: '側束' },
+                    { name: '面拉', meta: '1 組 x 力竭 | 慢速控制', desc: '後束・旋轉肌群' },
+                ]
+            },
+            {
+                title: '手臂 · HIT',
+                icon: './Arm day.png',
+                exercises: [
+                    { name: '槓鈴彎舉（正式組）', meta: '2組熱身 + 1組正式 | 至力竭', desc: '二頭肌' },
+                    { name: '窄握臥推（正式組）', meta: '2組熱身 + 1組正式 | 至力竭', desc: '三頭肌' },
+                    { name: '集中彎舉', meta: '1 組 x 力竭 | 每邊', desc: '二頭峰值' },
+                ]
+            }
+        ]
+    },
+    'ul-standard': {
+        name: 'Upper & Lower · Standard',
+        tag: 'Balanced Body',
+        tagColor: '#9c27b0',
+        icon: '⚖️',
+        days: [
+            {
+                title: '上肢日 A (Upper A)',
+                icon: './Chest day.png',
+                exercises: [
+                    { name: '槓鈴臥推', meta: '3 組 x 10 次 | 休息 90秒', desc: '胸・三頭' },
+                    { name: '引體向上', meta: '3 組 x 8 次 | 休息 90秒', desc: '背闊肌' },
+                    { name: '啞鈴肩推', meta: '3 組 x 10 次 | 休息 75秒', desc: '三角肌' },
+                    { name: '槓鈴彎舉', meta: '2 組 x 12 次 | 休息 60秒', desc: '二頭肌' },
+                ]
+            },
+            {
+                title: '下肢日 A (Lower A)',
+                icon: './Leg day.png',
+                exercises: [
+                    { name: '槓鈴深蹲', meta: '3 組 x 10 次 | 休息 90秒', desc: '股四頭肌・臀部' },
+                    { name: '羅馬尼亞硬舉', meta: '3 組 x 12 次 | 休息 90秒', desc: '腿後腱・臀部' },
+                    { name: '坐姿腿伸展', meta: '3 組 x 15 次 | 休息 60秒', desc: '股四頭肌' },
+                    { name: '腿彎舉', meta: '3 組 x 12 次 | 休息 60秒', desc: '腿後腱' },
+                ]
+            },
+            {
+                title: '上肢日 B (Upper B)',
+                icon: './Back day.png',
+                exercises: [
+                    { name: '滑輪下拉', meta: '3 組 x 10 次 | 休息 90秒', desc: '背闊肌' },
+                    { name: '啞鈴臥推', meta: '3 組 x 10 次 | 休息 90秒', desc: '胸大肌' },
+                    { name: '側平舉', meta: '3 組 x 15 次 | 休息 60秒', desc: '側三角' },
+                    { name: '三頭下壓', meta: '2 組 x 15 次 | 休息 60秒', desc: '三頭肌' },
+                ]
+            },
+            {
+                title: '下肢日 B (Lower B)',
+                icon: './Leg day.png',
+                exercises: [
+                    { name: '保加利亞分腿蹲', meta: '3 組 x 10 次 | 每邊 | 休息 90秒', desc: '單腿股四頭' },
+                    { name: '腿推機', meta: '3 組 x 12 次 | 休息 75秒', desc: '股四頭肌' },
+                    { name: '跪姿腿彎舉', meta: '3 組 x 12 次 | 休息 60秒', desc: '腿後腱' },
+                    { name: '站立小腿提踵', meta: '4 組 x 20 次 | 休息 45秒', desc: '小腿肌' },
+                ]
+            }
+        ]
+    },
+    'ul-pro': {
+        name: 'Upper & Lower · Pro',
+        tag: 'Performance Pro',
+        tagColor: '#ff5722',
+        icon: '🚀',
+        days: [
+            {
+                title: '上肢力量日 (Upper Power)',
+                icon: './Chest day.png',
+                exercises: [
+                    { name: '槓鈴臥推', meta: '5 組 x 5 次 | 85% 1RM | 休息 180秒', desc: '最大力量' },
+                    { name: '加重引體向上', meta: '5 組 x 5 次 | 休息 180秒', desc: '背部力量' },
+                    { name: '啞鈴肩推', meta: '4 組 x 6-8 次 | 休息 120秒', desc: '肩部力量' },
+                ]
+            },
+            {
+                title: '下肢力量日 (Lower Power)',
+                icon: './Leg day.png',
+                exercises: [
+                    { name: '前深蹲', meta: '4 組 x 6-8 次 | 追求爆發力 | 休息 120秒', desc: '爆發深蹲' },
+                    { name: '腿推機 Rest-Pause', meta: '4 組 x 12 次 | 最後兩組Rest-Pause', desc: '肌肥大衝擊' },
+                    { name: '俯臥腿彎舉', meta: '4 組 x 10 次 | 慢速控制 4秒', desc: '腿後腱' },
+                ]
+            },
+            {
+                title: '上肢輔助日 (Upper Hypertrophy)',
+                icon: './Back day.png',
+                exercises: [
+                    { name: '上斜臥推', meta: '4 組 x 10-12 次 | 休息 90秒', desc: '上胸' },
+                    { name: 'T-Bar 划船', meta: '4 組 x 10-12 次 | 休息 90秒', desc: '背部厚度' },
+                    { name: '側平舉遞減組', meta: '4 組 x 15 次 | 最後一組遞減三次', desc: '側束爆發' },
+                    { name: '面拉', meta: '3 組 x 15 次 | 休息 60秒', desc: '後束・穩定' },
+                ]
+            },
+            {
+                title: '下肢輔助日 (Lower Hypertrophy)',
+                icon: './Leg day.png',
+                exercises: [
+                    { name: '哈克深蹲', meta: '4 組 x 12-15 次 | 休息 90秒', desc: '股四頭肌下段' },
+                    { name: '單腿腿推', meta: '4 組 x 12 次 | 每邊', desc: '不對稱修正' },
+                    { name: '北歐腿彎舉', meta: '3 組 x 8 次 | 休息 90秒', desc: '腿後腱' },
+                    { name: '小腿提踵', meta: '5 組 x 20 次 | 休息 45秒', desc: '小腿爆量' },
+                ]
+            }
+        ]
+    }
+};
+
+// 當前選中的系列和方案
+let currentSeries = null;
+let currentPlan = null;
+
+
+// ══════════════════════════════════════════════════════
+// Workout 系列選擇邏輯
+// ══════════════════════════════════════════════════════
+
+window.selectSeries = function(seriesId) {
+    // 點卡片直接展開，不指定方案
+    currentSeries = seriesId;
+    if (seriesId === 'custom') {
+        selectSeriesPlan('custom', 'engine');
+    } else {
+        selectSeriesPlan(seriesId, 'standard');
+    }
+};
+
+window.selectSeriesPlan = function(seriesId, planType) {
+    currentSeries = seriesId;
+    currentPlan = planType;
+
+    const seriesMeta = {
+        '5day': { title: '5 Day Split', desc: '五天循環模式・最大肌肉生長空間' },
+        'bro': { title: 'Bro Split', desc: '一週一部位・HIT 深度打擊模式' },
+        'ul': { title: 'Upper & Lower', desc: '上下肢分化・高頻率平衡訓練' },
+        'custom': { title: '自訂課表', desc: 'TrackWell 自訂引擎・建立你的專屬課表' }
+    };
+
+    const planMeta = {
+        'standard': { label: 'Standard', color: '#4caf50' },
+        'pro': { label: 'Pro', color: '#ff9800' },
+        'engine': { label: 'TrackWell Engine', color: '#d88210' }
+    };
+
+    // 切換頁面
+    document.getElementById('workout-series').style.display = 'none';
+    document.getElementById('workout-home').style.display = 'block';
+    document.getElementById('workout-detail').style.display = 'none';
+
+    // 更新標題
+    const meta = seriesMeta[seriesId] || { title: '訓練課表', desc: '' };
+    document.getElementById('workout-series-title').innerText = meta.title;
+    document.getElementById('workout-series-desc').innerText = meta.desc;
+
+    // 更新 badge
+    const pm = planMeta[planType] || planMeta['standard'];
+    const badge = document.getElementById('series-plan-badge');
+    if (badge) {
+        badge.innerText = pm.label;
+        badge.style.background = pm.color + '22';
+        badge.style.color = pm.color;
+        badge.style.border = '1px solid ' + pm.color + '55';
+    }
+
+    // 渲染預設課表
+    renderPresetPlans(seriesId, planType);
+    // 渲染自訂課表
+    renderWorkoutCards();
+};
+
+window.backToSeriesPage = function() {
+    document.getElementById('workout-series').style.display = 'block';
+    document.getElementById('workout-home').style.display = 'none';
+    document.getElementById('workout-detail').style.display = 'none';
+    currentSeries = null;
+    currentPlan = null;
+};
+
+window.renderPresetPlans = function(seriesId, planType) {
+    const grid = document.getElementById('preset-plan-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const planKey = seriesId + '-' + planType;
+    const plan = PRESET_WORKOUT_PLANS[planKey];
+
+    if (!plan || seriesId === 'custom') {
+        // custom 或找不到預設課表，隱藏 preset grid
+        grid.style.display = 'none';
+        document.getElementById('custom-divider').style.display = 'none';
+        return;
+    }
+
+    grid.style.display = 'grid';
+
+    plan.days.forEach((day, idx) => {
+        const card = document.createElement('div');
+        card.className = 'workout-album-lg preset-plan-card';
+        card.onclick = () => openPresetDay(plan, day, idx);
+
+        const dayLabel = ['一', '二', '三', '四', '五', '六', '日'][idx] || (idx + 1);
+        card.innerHTML = `
+            <div class="preset-day-badge">第 ${dayLabel} 天</div>
+            <img src="${day.icon}" class="album-cover-lg" onerror="this.src='./custom.jpg'">
+            <h3>${day.title}</h3>
+            <p>${day.exercises.length} 個動作・${plan.tag}</p>
+        `;
+        grid.appendChild(card);
+    });
+
+    // 顯示分隔線（如果有使用者自訂課表）
+    const customDivider = document.getElementById('custom-divider');
+    if (customDivider) {
+        customDivider.style.display = Object.keys(exercisesData).length > 0 ? 'flex' : 'none';
+    }
+};
+
+window.openPresetDay = function(plan, day, dayIdx) {
+    currentViewingPlan = '__preset__' + plan.name + '_' + dayIdx;
+    document.getElementById('workout-home').style.display = 'none';
+    document.getElementById('workout-detail').style.display = 'block';
+    document.getElementById('current-day-title').innerText = day.title;
+
+    const imgEl = document.getElementById('detail-cover');
+    imgEl.src = day.icon;
+    imgEl.onerror = function() { this.src = './custom.jpg'; };
+
+    // 渲染動作
+    const container = document.getElementById('exercise-list-container');
+    container.innerHTML = '';
+
+    day.exercises.forEach((ex, i) => {
+        const row = document.createElement('div');
+        row.className = 'list-row';
+        row.innerHTML = `
+            <span class="num">${String(i+1).padStart(2,'0')}</span>
+            <div class="info" style="cursor:pointer;" onclick="toggleExComplete(this)">
+                <strong style="font-size:16px; color:#fff;">${ex.name}</strong><br>
+                <small style="color:#888; font-weight:600;">${ex.desc}</small>
+            </div>
+            <div style="font-weight:bold; font-size:13px; color:#999; cursor:pointer; line-height:1.4;" onclick="toggleExComplete(this.previousElementSibling)">
+                ${ex.meta}
+            </div>
+            <div class="row-actions">
+                <i class="far fa-circle check-icon" onclick="toggleExComplete(this.parentElement.previousElementSibling.previousElementSibling)"></i>
+            </div>
+        `;
+        container.appendChild(row);
+    });
+
+    updateWorkoutProgress();
+};
+
 // 對應 labels.txt 全部 9 個類別的食物資料庫
 const FOOD_DATABASE = {
     "Baked Potato":  { name: "烤馬鈴薯",   kcal: 250, carbs: 50, protein: 5,  fat: 2  },
@@ -455,7 +919,16 @@ window.showPage = function(id, navItem) {
     document.getElementById(id).classList.add('active');
     if (navItem) navItem.classList.add('active');
     if (window.innerWidth <= 768) document.getElementById('app').classList.remove('sidebar-active');
-    if (id === 'workout') backToWorkoutHome();
+    if (id === 'workout') {
+        // 回到系列選擇頁
+        const seriesEl = document.getElementById('workout-series');
+        const homeEl = document.getElementById('workout-home');
+        const detailEl = document.getElementById('workout-detail');
+        if (seriesEl) seriesEl.style.display = 'block';
+        if (homeEl) homeEl.style.display = 'none';
+        if (detailEl) detailEl.style.display = 'none';
+        currentSeries = null; currentPlan = null;
+    }
 }
 
 window.toggleSidebar = function() {
@@ -551,8 +1024,10 @@ window.openDay = function(title, iconUrl) {
 
 window.backToWorkoutHome = function() {
     currentViewingPlan = null;
-    document.getElementById('workout-home').style.display = 'block';
-    document.getElementById('workout-detail').style.display = 'none';
+    const homeEl = document.getElementById('workout-home');
+    const detailEl = document.getElementById('workout-detail');
+    if (homeEl) homeEl.style.display = 'block';
+    if (detailEl) detailEl.style.display = 'none';
 }
 
 window.renderDayExercises = function(title) {
