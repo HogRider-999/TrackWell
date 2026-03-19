@@ -744,3 +744,123 @@ body { background-color: var(--bg-black); color: var(--text-white); overflow: hi
 @media (max-width: 480px) {
     .meal-tab-btn span[data-i18n] { display: none; }
 }
+
+/* ── 番茄鐘修復版 ── */
+.pomo-compact {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 20px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 20px;
+    border: 1px solid #333;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+.pomo-right {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex: 1;
+    min-width: 200px;
+}
+.pomo-btns {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.pomo-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    background: #2a2a2a;
+    transition: 0.25s;
+    white-space: nowrap;
+}
+.pomo-action-btn.play {
+    background: var(--primary);
+    box-shadow: 0 5px 15px var(--primary-glow);
+    font-size: 15px;
+    padding: 13px 24px;
+}
+.pomo-action-btn.play:hover { transform: translateY(-2px); }
+.pomo-action-btn:not(.play):hover { background: #333; }
+.pomo-modes-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.sm-mode {
+    background: #222;
+    border: 1px solid #444;
+    color: var(--text-grey);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 13px;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.sm-mode small {
+    font-size: 10px;
+    opacity: 0.6;
+    font-weight: 700;
+}
+.sm-mode.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    box-shadow: 0 3px 10px var(--primary-glow);
+}
+.sm-mode.active small { opacity: 0.8; }
+
+/* ── 頁面提示小字 ── */
+.page-subtitle-hint {
+    font-size: 12px;
+    color: #555;
+    font-weight: 600;
+    line-height: 1.7;
+    margin-top: 5px;
+    margin-bottom: 4px;
+    padding-left: 2px;
+}
+.page-subtitle-hint::before {
+    content: '💡 ';
+}
+
+/* ── hint-inline ── */
+.hint-inline {
+    font-size: 11.5px;
+    color: #555;
+    font-weight: 600;
+    margin: 6px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.hint-inline i { color: #666; font-size: 11px; }
+.hint-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(216,130,16,0.06);
+    border: 1px dashed rgba(216,130,16,0.25);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin: 8px 0 14px;
+    font-size: 12px;
+    color: #888;
+    font-weight: 600;
+    line-height: 1.6;
+}
+.hint-box i { color: var(--primary); font-size: 13px; flex-shrink: 0; margin-top: 2px; }
