@@ -13,6 +13,50 @@
     <!-- TensorFlow.js + TFLite 推論引擎 -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite@0.0.1-alpha.10/dist/tf-tflite.min.js"></script>
+
+<style>
+/* ── 新手引導提示 ── */
+.hint-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(216,130,16,0.07);
+    border: 1px dashed rgba(216,130,16,0.35);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin: 10px 0 16px;
+    font-size: 12.5px;
+    color: #aaa;
+    font-weight: 600;
+    line-height: 1.6;
+}
+.hint-box i { color: var(--primary); font-size: 14px; margin-top: 2px; flex-shrink: 0; }
+.hint-box b { color: #ddd; }
+.hint-inline {
+    font-size: 11.5px;
+    color: #666;
+    font-weight: 600;
+    margin: 4px 0 0;
+    padding-left: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.hint-inline i { color: var(--primary); font-size: 11px; }
+.hint-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10.5px;
+    color: #888;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 3px 8px;
+    margin-left: 6px;
+    font-weight: 700;
+}
+</style>
 </head>
 <body>
     <div id="auth-screen" class="auth-overlay">
@@ -61,7 +105,7 @@
             <div class="sidebar-exam-card" onclick="openModal('countdown-settings-modal')">
                 <div class="exam-label" id="side-countdown-label">2026 統測倒數</div>
                 <div class="exam-days" id="exam-days">--</div>
-                <div class="exam-sub"><span data-i18n="sideExamSub">點擊設定目標</span></div>
+                <div class="exam-sub"><span data-i18n="sideExamSub">點擊可自訂倒數目標與日期</span></div>
             </div>
         </aside>
 
@@ -88,6 +132,10 @@
                             <p id="home-quote"><span></span></p>
                         </div>
                     </div>
+                    <div class="hint-box" style="margin-bottom:16px;">
+                        <i class="fas fa-hand-pointer"></i>
+                        <span>點擊下方任一卡片即可更新數據。<b>步數卡</b>可輸入今日步數、<b>熱量圓圈</b>可設定每日目標、<b>體重卡</b>可記錄今日體重。</span>
+                    </div>
                     <div class="dashboard-grid-lg">
                         <div class="dash-card-lg card-small pointer-card" onclick="openModal('steps-settings-modal')">
                             <div class="card-icon-header">
@@ -98,6 +146,7 @@
                             <div class="bar-outer">
                                 <div id="home-steps-bar" class="bar-inner" style="width: 0%;"></div>
                             </div>
+                            <p class="hint-inline"><i class="fas fa-info-circle"></i> 點此卡片 → 輸入今日步數與目標</p>
                         </div>
                         <div class="dash-card-lg card-small pointer-card" onclick="openModal('cal-goal-modal')">
                             <div class="card-icon-header">
@@ -140,6 +189,7 @@
                                     <span id="home-weight-dist">距離目標: --kg</span>
                                 </div>
                             </div>
+                            <p class="hint-inline"><i class="fas fa-info-circle"></i> 點此卡片 → 輸入身高、體重、體脂、目標體重</p>
                         </div>
                     </div>
                 </section>
@@ -148,6 +198,10 @@
                     <div class="timer-page-grid">
                         <div class="timer-block-side">
                             <h2 class="gradient-text"><i class="fas fa-clock"></i> <span data-i18n="pomoTitle">番茄鐘專注</span></h2>
+                            <div class="hint-box">
+                                <i class="fas fa-info-circle"></i>
+                                <span>按<b>播放鍵▶</b>開始倒數；下方選 <b>25m</b>=專注、<b>5m</b>=短休息、<b>15m</b>=長休息。<b>長按計時數字</b>可快速重置。</span>
+                            </div>
                             <div class="pomo-compact">
                                 <div class="pomo-circle-sm">
                                     <svg viewBox="0 0 100 100">
@@ -181,6 +235,10 @@
                         </div>
                         <div class="timer-block-side">
                             <h2 class="gradient-text"><i class="fas fa-stopwatch"></i> <span data-i18n="customTimerTitle">自訂計時器</span></h2>
+                            <div class="hint-box">
+                                <i class="fas fa-info-circle"></i>
+                                <span>輸入<b>時 / 分 / 秒</b>後按<b>開始</b>。計時中可按<b>暫停</b>，或<b>長按數字</b>快速重置。</span>
+                            </div>
                             <div class="custom-timer-container">
                                 <div class="custom-timer-display" id="custom-timer-display">00:00:00</div>
                                 <div class="timer-input-group" id="ct-inputs">
@@ -216,6 +274,10 @@
                         <div class="section-header-lg">
                             <h2 class="gradient-text">選擇你的訓練系統</h2>
                             <p class="meta-desc-lg">找到最適合你的課表，開始你的訓練旅程</p>
+                        </div>
+                        <div class="hint-box">
+                            <i class="fas fa-info-circle"></i>
+                            <span>點擊<b>整張卡片</b>可直接用 Standard 模式開始；若要選 Pro 課表，請點卡片內的<b>橘色標籤</b>。<b>Standard</b> 適合初學者，<b>Pro</b> 適合有訓練經驗者。</span>
                         </div>
                         <div class="series-grid">
                             <div class="series-card" onclick="selectSeries('5day')">
@@ -278,6 +340,10 @@
                         </div>
                         <div id="preset-plan-grid" class="workout-grid-lg"></div>
                         <div id="custom-divider" class="custom-divider" style="display:none;"><span>自訂課表</span></div>
+                        <div class="hint-box" id="custom-hint" style="display:none;">
+                            <i class="fas fa-info-circle"></i>
+                            <span>這裡是你的<b>自訂課表</b>。點擊「+ 自訂課表」卡片可建立新計畫，並自由新增動作。</span>
+                        </div>
                         <div class="workout-grid-lg" id="workout-card-grid"></div>
                     </div>
 
@@ -311,6 +377,10 @@
                                 <div id="workout-progress-bar" class="wp-fill" style="width:0%"></div>
                             </div>
                         </div>
+                        <div class="hint-box">
+                            <i class="fas fa-check-circle"></i>
+                            <span>完成一個動作後，請<b>點擊右側的圓圈 ○</b> 打勾，或直接<b>點擊動作名稱</b>也可以完成。完成的動作會顯示刪除線，上方進度條會自動更新。</span>
+                        </div>
                         <div class="tracklist-container">
                             <div class="tracklist-header-lg">
                                 <span>#</span>
@@ -330,6 +400,10 @@
                             <p class="meta-desc-lg"><span data-i18n="dietSub">精準掌握熱量與三大營養素</span></p>
                         </div>
                         <div class="meal-actions">
+                            <div class="hint-box" style="margin:0 0 10px; align-self:flex-end;">
+                                <i class="fas fa-info-circle"></i>
+                                <span><b>新增活動</b>=記錄運動消耗熱量　<b>手動輸入</b>=自己輸入食物營養　<b>AI辨識</b>=拍照自動分析</span>
+                            </div>
                             <button class="ai-scan-btn activity-btn" onclick="openModal('activity-input-modal')">
                                 <i class="fas fa-running"></i> <span data-i18n="dietActivity">新增活動</span>
                             </button>
@@ -351,6 +425,7 @@
                                 <div class="cal-center-text">
                                     <span class="remain-val" id="cal-remaining">0</span>
                                     <span class="remain-lbl"><span data-i18n="remain">剩餘 (kcal)</span></span>
+                                    <span style="font-size:10px;color:#555;margin-top:4px;">目標 - 已攝取 + 運動消耗</span>
                                 </div>
                             </div>
                             <div class="cal-stats-row">
@@ -406,6 +481,10 @@
                                     <i class="fas fa-trash-alt" style="color:#ff5252;cursor:pointer;font-size:16px;opacity:0.7;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" onclick="resetDiet()"></i>
                                 </div>
                             </div>
+                            <div class="hint-box">
+                                <i class="fas fa-info-circle"></i>
+                                <span>請先點選餐別（<b>早餐 / 午餐 / 晚餐 / 點心</b>），再點右上角按鈕新增食物。新增的食物會記錄在目前選中的餐別。</span>
+                            </div>
                             <!-- 餐別 Tabs -->
                             <div class="meal-tabs">
                                 <button class="meal-tab-btn active" onclick="setMealType('breakfast',this)">
@@ -436,6 +515,7 @@
                                 <h3><i class="fas fa-tint" style="color:#00bcd4;"></i> <span data-i18n="waterTitle">水分攝取</span></h3>
                                 <span id="water-count-txt">0 / 2500 ml</span>
                             </div>
+                            <p class="hint-inline" style="margin-bottom:10px;"><i class="fas fa-info-circle"></i> 點擊卡片<b>右半邊</b>增加水量（+1杯）、<b>左半邊</b>減少水量。每杯約 312ml，目標 2500ml。</p>
                             <div class="water-grid" id="water-cups-container"></div>
                         </div>
                     </div>
@@ -453,6 +533,10 @@
                                 <button class="ai-scan-btn" onclick="openModal('body-input-modal')">
                                     <i class="fas fa-edit"></i> <span data-i18n="statsUpdate">更新數據</span>
                                 </button>
+                            </div>
+                            <div class="hint-box" style="margin-bottom:0;">
+                                <i class="fas fa-info-circle"></i>
+                                <span>點右側<b>「更新數據」</b>按鈕可輸入今日體重、體脂、骨骼肌。建議每天記錄以追蹤進度。</span>
                             </div>
                             <div class="today-data-display">
                                 <div class="data-item">
@@ -480,6 +564,10 @@
                                     <span class="filter-btn" onclick="updateChart('year')"><span data-i18n="fYear">今年</span></span>
                                 </div>
                             </div>
+                            <div class="hint-box" style="margin-bottom:8px;">
+                                <i class="fas fa-info-circle"></i>
+                                <span>體重圖表會顯示你的歷史紀錄。<b>滑鼠移到柱子上</b>可查看當日數值。請先在「更新數據」中輸入體重，圖表才會顯示真實資料。</span>
+                            </div>
                             <div class="chart-container-lg">
                                 <div class="chart-y-axis">
                                     <span>70kg</span>
@@ -498,6 +586,7 @@
                                 <p style="color:var(--primary); font-weight:bold; margin-bottom: 20px;">
                                     <span data-i18n="statsStreakSub">保持這個節奏！</span>
                                 </p>
+                                <p class="hint-inline" style="justify-content:center; margin-bottom:12px;"><i class="fas fa-info-circle"></i> 每天點一次「今日簽到」累積連續天數</p>
                                 <button class="btn-create" id="btn-checkin" onclick="performCheckIn()">
                                     <span data-i18n="btnCheckIn">今日簽到</span>
                                 </button>
@@ -570,6 +659,10 @@
                                         <option value="1.725" data-i18n="calCalcActive">高度（每週6-7次）</option>
                                         <option value="1.9" data-i18n="calCalcVeryActive">非常活躍</option>
                                     </select>
+                                </div>
+                                <div class="hint-box" style="margin-bottom:12px;">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>填入資料後按<b>「計算」</b>，系統會用 Mifflin-St Jeor 公式計算你的每日建議熱量。計算完成後按<b>「套用為每日熱量目標」</b>即可同步到飲食頁。</span>
                                 </div>
                                 <button class="btn-create" style="width:100%; margin-bottom:16px;" onclick="calcCalories()">
                                     <i class="fas fa-calculator"></i> <span data-i18n="calCalcBtn">計算</span>
