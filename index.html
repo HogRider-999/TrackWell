@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TrackWell</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Font Awesome 6.5.2 (支援所有新 icon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W+g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#d88210">
 
@@ -87,23 +88,15 @@
                             <p id="home-quote"><span></span></p>
                         </div>
                     </div>
-                    <!-- 今日摘要快速總覽 -->
-                    <div class="summary-strip">
+                    </div>
                         <div class="summary-item">
-                            <i class="fas fa-shoe-prints" style="color:#ffb347;"></i>
-                            <div><span class="summary-val" id="summary-steps">0</span><span class="summary-lbl" data-i18n="summarySteps">步數</span></div>
-                        </div>
-                        <div class="summary-item">
-                            <i class="fas fa-fire" style="color:#ff7043;"></i>
-                            <div><span class="summary-val" id="summary-cal">0</span><span class="summary-lbl" data-i18n="summaryCal">熱量</span></div>
-                        </div>
-                        <div class="summary-item">
-                            <i class="fas fa-tint" style="color:#00bcd4;"></i>
                             <div><span class="summary-val" id="summary-water">0 ml</span><span class="summary-lbl" data-i18n="summaryWater">水分</span></div>
                         </div>
                         <div class="summary-item">
-                            <i class="fas fa-dumbbell" style="color:#9c27b0;"></i>
                             <div><span class="summary-val" id="summary-workout">--</span><span class="summary-lbl" data-i18n="summaryWorkout">訓練</span></div>
+                        </div>
+                        <div class="summary-item">
+                            <div><span class="summary-val" id="summary-steps">0</span><span class="summary-lbl" data-i18n="summarySteps">步數</span></div>
                         </div>
                     </div>
                     <div class="dashboard-grid-lg">
@@ -229,13 +222,82 @@
                 </section>
 
                 <section id="workout" class="page">
-                    <div id="workout-home">
+                    <!-- ① 課表系列選擇頁 -->
+                    <div id="workout-series" class="workout-series-page">
                         <div class="section-header-lg">
-                            <h2 class="gradient-text"><span data-i18n="workoutTitle">專屬訓練課表</span></h2>
-                            <p class="meta-desc-lg"><span data-i18n="workoutSub">點擊卡片開啟訓練模式，或建立新計畫</span></p>
+                            <h2 class="gradient-text">選擇你的訓練系統</h2>
+                            <p class="meta-desc-lg">找到最適合你的課表，開始你的訓練旅程</p>
                         </div>
+                        <div class="series-grid">
+                            <div class="series-card" onclick="selectSeries('5day')">
+                                <div class="series-icon">5</div>
+                                <div class="series-info">
+                                    <h3>5 Day Split</h3>
+                                    <p>五天循環模式・肌肉最大生長空間</p>
+                                    <div class="series-tags">
+                                        <span class="stag standard" onclick="event.stopPropagation(); selectSeriesPlan('5day','standard')">Standard</span>
+                                        <span class="stag pro" onclick="event.stopPropagation(); selectSeriesPlan('5day','pro')">Pro · Lee Priest</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="series-card" onclick="selectSeries('bro')">
+                                <div class="series-icon">B</div>
+                                <div class="series-info">
+                                    <h3>Bro Split</h3>
+                                    <p>一週一部位・HIT 深度打擊</p>
+                                    <div class="series-tags">
+                                        <span class="stag standard" onclick="event.stopPropagation(); selectSeriesPlan('bro','standard')">Standard</span>
+                                        <span class="stag pro" onclick="event.stopPropagation(); selectSeriesPlan('bro','pro')">Pro · Yates/Mentzer</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="series-card" onclick="selectSeries('ul')">
+                                <div class="series-icon">UL</div>
+                                <div class="series-info">
+                                    <h3>Upper & Lower</h3>
+                                    <p>上下肢分化・高頻率訓練</p>
+                                    <div class="series-tags">
+                                        <span class="stag standard" onclick="event.stopPropagation(); selectSeriesPlan('ul','standard')">Standard</span>
+                                        <span class="stag pro" onclick="event.stopPropagation(); selectSeriesPlan('ul','pro')">Pro · Performance Pro</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="series-card" onclick="selectSeries('custom')">
+                                <div class="series-icon"><i class="fas fa-sliders-h"></i></div>
+                                <div class="series-info">
+                                    <h3>Custom</h3>
+                                    <p>TrackWell 自訂引擎・完全個人化</p>
+                                    <div class="series-tags">
+                                        <span class="stag engine" onclick="event.stopPropagation(); selectSeriesPlan('custom','engine')">TrackWell Engine</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ② 系列內課表列表頁 -->
+                    <div id="workout-home" style="display:none;">
+                        <div class="detail-top-nav" style="display:flex; justify-content:space-between; align-items:center;">
+                            <button class="back-modern-btn" onclick="backToSeriesPage()">
+                                <i class="fas fa-arrow-left"></i> 返回選擇
+                            </button>
+                            <div id="series-plan-badge" class="series-plan-badge"></div>
+                        </div>
+                        <div class="section-header-lg" id="workout-home-header">
+                            <h2 class="gradient-text" id="workout-series-title">專屬訓練課表</h2>
+                            <p class="meta-desc-lg" id="workout-series-desc">點擊卡片開啟訓練模式，或建立新計畫</p>
+                        </div>
+                        <!-- 預設課表（系列課表） -->
+                        <div id="preset-plan-grid" class="workout-grid-lg"></div>
+                        <!-- 分隔線（只在有自訂課表時顯示）-->
+                        <div id="custom-divider" class="custom-divider" style="display:none;">
+                            <span>自訂課表</span>
+                        </div>
+                        <!-- 使用者自訂課表 + 新增按鈕 -->
                         <div class="workout-grid-lg" id="workout-card-grid"></div>
                     </div>
+
+                    <!-- ③ 訓練詳情頁 -->
                     <div id="workout-detail" style="display:none">
                         <div class="detail-top-nav" style="display: flex; justify-content: space-between;">
                             <button class="back-modern-btn" onclick="backToWorkoutHome()">
@@ -368,7 +430,7 @@
                                     <span class="meal-tab-kcal" id="badge-kcal-breakfast">0 kcal</span>
                                 </button>
                                 <button class="meal-tab-btn" onclick="setMealType('lunch',this)">
-                                    <i class="fas fa-cloud-sun"></i> <span data-i18n="mealLunch">午餐</span>
+                                    <i class="fas fa-sun"></i> <span data-i18n="mealLunch">午餐</span>
                                     <span class="meal-tab-kcal" id="badge-kcal-lunch">0 kcal</span>
                                 </button>
                                 <button class="meal-tab-btn" onclick="setMealType('dinner',this)">
@@ -376,7 +438,7 @@
                                     <span class="meal-tab-kcal" id="badge-kcal-dinner">0 kcal</span>
                                 </button>
                                 <button class="meal-tab-btn" onclick="setMealType('snack',this)">
-                                    <i class="fas fa-cookie"></i> <span data-i18n="mealSnack">點心</span>
+                                    <i class="fas fa-apple-alt"></i> <span data-i18n="mealSnack">點心</span>
                                     <span class="meal-tab-kcal" id="badge-kcal-snack">0 kcal</span>
                                 </button>
                             </div>
