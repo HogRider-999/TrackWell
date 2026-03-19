@@ -519,19 +519,7 @@ const dict = {
         calCalcGender: '性別', calCalcMale: '男', calCalcFemale: '女',
         calCalcActivity: '活動量', calCalcSedentary: '久坐（幾乎不動）', calCalcLight: '輕度（每週1-3次）',
         calCalcModerate: '中度（每週3-5次）', calCalcActive: '高度（每週6-7次）', calCalcVeryActive: '非常活躍',
-        calCalcResult: '建議熱量', calCalcBtn: '計算',
-        hintHome: '點擊下方卡片更新數據・步數卡=輸入今日步數・熱量圓圈=設定每日目標・體重卡=記錄體重體脂',
-        hintSteps: '點此卡片 → 輸入今日步數與目標',
-        hintWeight: '點此卡片 → 輸入身高、體重、體脂、目標體重',
-        hintWorkout: '點整張卡片 → 直接以 Standard 開始・點橘色標籤 → 選擇 Pro 課表・Standard 適合初學者，Pro 適合進階者',
-        hintExercise: '點擊動作名稱 或 右側圓圈 ○ 完成該動作・完成後顯示刪除線・進度條自動更新',
-        hintDiet: '新增活動=運動消耗・手動輸入=自填食物・AI辨識=拍照自動分析・先選餐別再新增',
-        hintWater: '點擊卡片右半邊增加水量（+1杯）、左半邊減少水量。每杯約 312ml，目標 2500ml',
-        hintPomo: '按播放鍵▶開始倒數・25m=專注／5m=短休息／15m=長休息・長按數字可重置',
-        hintTimer: '輸入時 / 分 / 秒後按開始・計時中可暫停・長按數字快速重置',
-        hintStats: '點「更新數據」記錄今日體重體脂・滑鼠移到圖表柱子查看數值・每天簽到累積連續天數',
-        hintCheckin: '每天點一次「今日簽到」累積連續天數',
-        hintSettings: '熱量計算機：填入資料後按計算，再按「套用為目標」同步到飲食頁'
+        calCalcResult: '建議熱量', calCalcBtn: '計算'
     },
     'en': {
         navHome: 'Home', navWorkout: 'Workouts', navDiet: 'Diet', navPomo: 'Timer', navStats: 'Analytics', navSettings: 'Settings',
@@ -558,19 +546,7 @@ const dict = {
         calCalcGender: 'Gender', calCalcMale: 'Male', calCalcFemale: 'Female',
         calCalcActivity: 'Activity Level', calCalcSedentary: 'Sedentary', calCalcLight: 'Light (1-3x/week)',
         calCalcModerate: 'Moderate (3-5x/week)', calCalcActive: 'Active (6-7x/week)', calCalcVeryActive: 'Very Active',
-        calCalcResult: 'Recommended Calories', calCalcBtn: 'Calculate',
-        hintHome: 'Tap any card to update data・Steps=log daily steps・Calories=set daily goal・Weight=record body stats',
-        hintSteps: 'Tap this card → enter today\'s steps and goal',
-        hintWeight: 'Tap this card → enter height, weight, body fat, goal weight',
-        hintWorkout: 'Tap the whole card → start with Standard・Tap the badge → choose Pro・Standard for beginners, Pro for advanced',
-        hintExercise: 'Tap the exercise name or the circle ○ on the right to complete・Shows strikethrough when done',
-        hintDiet: 'Add Activity=log exercise burn・Manual=enter food manually・AI Scan=photo recognition・Select meal tab first',
-        hintWater: 'Tap right side of card to add water (+1 cup)・left side to remove・~312ml per cup・goal 2500ml',
-        hintPomo: 'Press ▶ to start・25m=focus / 5m=short break / 15m=long break・Long press timer to reset',
-        hintTimer: 'Enter H / M / S then press Start・Pause anytime・Long press display to reset',
-        hintStats: 'Tap "Update" to log weight & body fat・Hover bars for values・Check in daily to build streak',
-        hintCheckin: 'Check in once a day to build your streak',
-        hintSettings: 'Calorie Calculator: fill in details, press Calculate, then "Apply as Goal" to sync to Diet page'
+        calCalcResult: 'Recommended Calories', calCalcBtn: 'Calculate'
     }
 };
 
@@ -920,11 +896,8 @@ window.changeLanguage = function(lang) {
         if (t[key] && key !== 'homeQuote') {
             if (el.tagName === 'INPUT' && el.type === 'text' && !el.value) {
                 el.placeholder = t[key];
-            } else if (el.tagName === 'INPUT' || el.tagName === 'OPTION' || el.tagName === 'SELECT') {
-                el.innerText = t[key];
             } else {
-                // hint 類元素直接設 textContent，保留結構不破壞
-                el.textContent = t[key];
+                el.innerText = t[key];
             }
         }
     });
@@ -1337,8 +1310,7 @@ window.togglePomodoro = function() {
     const btn = document.getElementById('pomo-play-btn');
     if (pomoIsRunning) {
         clearInterval(pomoInterval);
-        const lang2 = document.getElementById('lang-select').value || 'zh';
-        btn.innerHTML = '<i class="fas fa-play"></i> ' + (lang2 === 'en' ? 'Start' : '開始');
+        btn.innerHTML = '<i class="fas fa-play"></i>';
     } else {
         pomoInterval = setInterval(() => {
             if (pomoTimeLeft <= 0) {
@@ -1350,8 +1322,7 @@ window.togglePomodoro = function() {
             pomoTimeLeft--;
             updatePomoUI();
         }, 1000);
-        const lang3 = document.getElementById('lang-select').value || 'zh';
-        btn.innerHTML = '<i class="fas fa-pause"></i> ' + (lang3 === 'en' ? 'Pause' : '暫停');
+        btn.innerHTML = '<i class="fas fa-pause"></i>';
     }
     pomoIsRunning = !pomoIsRunning;
 }
